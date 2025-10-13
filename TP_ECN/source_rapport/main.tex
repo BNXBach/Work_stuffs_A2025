@@ -1,0 +1,362 @@
+
+% On définit le type de document, de papier et la grosseur des caractères.
+\documentclass[letterpaper,11pt]{article}
+
+% Trois lignes liées à l'ordinateur avec lequel on produit le document.
+\usepackage[utf8]{inputenc}
+\usepackage{titling}
+\usepackage{amsthm}
+
+% Highlight text
+\usepackage{soul} % for the command \hl
+
+% Bibliographie
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{Bib1.bib}
+
+\usepackage{dsfont}
+\usepackage{layout}
+\usepackage{cancel}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[document]{ragged2e}
+\usepackage[top=2cm,bottom=2cm,left=2.5cm,right=2.5cm,includehead=true,headheight=1cm]{geometry}%Pour ajustement des marges.
+\usepackage{amsbsy}%Accès à des symboles mathématiques
+\usepackage{amsfonts}%Accès à des symboles mathématiques
+\usepackage{amssymb}%Accès à des symboles mathématiques
+\usepackage{bm}%Pour mettre en gras n'importe quel symbole.
+\usepackage{enumerate}%Pour les listes d'énumération.
+\usepackage{parskip}%Pour pouvoir modifier l'espace entre les paragraphes.
+\usepackage{setspace}%Pour pouvoir modifier l'espace entre les lignes.
+\usepackage{upgreek}%Pour accéder aux lettres grecques en romain.
+\usepackage[b]{esvect}%Permet de créer des vecteurs.
+\usepackage{wasysym}
+\usepackage{afterpage}
+\usepackage{ stmaryrd }
+\usepackage{minted}
+\usepackage{mathtools}
+\usepackage{placeins}
+
+%Symboles fréquents
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\?}{\stackrel{?}{=}}
+\let\epsilon\varepsilon
+\newcommand{\der}{\text{d}}
+
+%Mettre en gras ET italique le paramètre de la fonction
+\newcommand{\gras}[1]{\textbf{\textit{#1}}} 
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}%page vierge
+
+
+\newcommand{\probVar}[1]{\text{Var}\left(#1\right)} %Variance
+\newcommand{\probCov}[1]{\text{Cov}\left(#1\right)} %Variance
+\newcommand{\probP}[1]{\mathds{P}\left{#1\right}} %P de probabilités
+\newcommand{\probE}[1]{\mathbb{E}\left[#1\right]} %E de espérance
+
+\usepackage{hyperref}%'Linker' des équations et sources
+
+%Les quatre lignes qui suivent définissent l'espace entre les paragraphes, l'indentation, l'espace entre les lignes et la distance entre une boite et ce qu'elle contient.
+\parskip=10pt 
+\parindent=0pt
+\onehalfspacing
+\fboxsep=9pt
+
+%Parenthèses
+\newcommand{\bgl}{\bigl(}
+\newcommand{\Bgl}{\Bigl(}
+\newcommand{\bggl}{\biggl(}
+\newcommand{\Bggl}{\Biggl(}
+\newcommand{\bgr}{\bigr)}
+\newcommand{\Bgr}{\Bigr)}
+\newcommand{\bggr}{\biggr)}
+\newcommand{\Bggr}{\Biggr)}
+
+\renewcommand\thesection{\arabic{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+\vspace*{2cm}  
+
+\textbf{Rapport TP 1}%Le titre du travail
+
+\vspace{3cm}
+ECN6258 Sujets spéciaux en monnaie, banques et marchés
+
+Automne 2025
+
+\vspace{4cm}
+\textbf{Nguyen-Xuan-Bach Bui}
+
+\vfill
+Un devoir présenté à\\Rostand Tchouakam Mbouendeu
+\vspace{0.8cm}
+
+Département de sciences économiques\\Université de Montréal\\
+
+\end{center}
+\end{titlepage}
+
+\section*{Partie 1 - Courbes Zéro-Coupon}
+
+Le code utilisé pour générer la graphique est dans la partie "Exo 1" du fichier MATLAB TP1.m
+
+La graphique détaille des courbes zéro-coupon de la Banque du Canada. L'axe horizontal décrit la maturité, l'éventail des échéances va de 3 mois (0.25 an) à 30 ans avec un pas de 3 mois.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\columnwidth]{ZC.png}
+    \caption{Courbes zéro coupon de la première jour de juillet des années clés (Source: Banque du Canada)}
+\end{figure}
+\FloatBarrier
+
+Commentaire sur des courbes:
+
+\begin{itemize}
+    \item \textbf{1990 (violet foncé)} \\
+    On note 2 phénomènes clés. Premièrement, cette courbe est celle la plus élevée de la graphique, c-à-d les taux sont les plus hauts. Deuxièmement, c'est une courbe inversée et de la forme décroissante (les taux courts baissent progressivement et donc sont plus grands que les taux longs).\\
+    L'explication est la situation de la période. On était dans les années 1990 et l'inflation était encore très forte. La forme de la courbe peut être expliquée par l'introduction de la politique monétaire et aussi le resserrement monétaire de la Banque. Alors, les marchés ont anticipé une baisse future des taux d'intérêts.\\
+    En général, cette courbe reflète bien la situation économique du Canada dans les années 1990.
+
+    \item \textbf{1995-2000 (violet et bleu)} \\
+    On peut voir que les taux baissent encore (5\% à 8\%) et la courbe de 1995 est de forme normale (croissance stable) mais un peu plate. Cela indique que l'inflation a été bien maîtrisé grâce à la politique monétaire consolidée.\\
+    Cette tendance continue vers le début des années 2000 mais la courbe est maintenant plate avec une légère baisse pour les taux longs. Les marchés ont exigé une prime de terme faible.
+
+    \item \textbf{2005 (turquoise)}\\
+    On confirme encore que les taux baissent au cours du temps (2\% à 4\%). On note que la courbe est encore croissante mais c'est plus plate maintenant. La contexte est qu'on est dans la période pré-crise financière, l'environment était encore stable mais il ralentit. Alors, les agents ont prévenu un ralentissement dans le futur (courbe plate).
+
+    \item \textbf{2009 (vert clair)}\\
+    On note une courbe très basse et pentue. Les taux courts sont proches de 0, c-à-d la politique monétaire est dans la mode ultra accomodante pour stimuler les marchés. La contexte est évidente, on est dans la période de la sortie de la crise financière ce qui explique les taux courts. L'effort de la Banque est aussi refleté parce que les investisseurs ont prévenu une reprise (les taux longs sont plus elevés).
+    
+    \item \textbf{2015-2019 (vert foncé et orange)}\\ 
+    On note que dans la courbe de 2015, les taux courts sont encore dans la mode accomodante mais la courte est plus plate. Par contre, pour la courbe de 2019, la courbe est presque complètement plate. L'explication est que les Banques centrales restaient prudentes. La période 2010-2019 était très stable et il n'y avait pas de croissance. Les agents ont même décrit le phénomène comme une stagnation.
+
+    \item \textbf{2021-2022 (rouge clair et orange)}\\ 
+    On note que la courbe de 2021 est en mode accomodante. C'est évident parce que on est dans la période de la crise COVID et donc la Banque a voulu stimuler les marchés post-COVID. Par contre, au lieu d'une longue période de stimulation et de stabilité, on peut voir que dès 2022, les taux sont déjà stabilisés. Cela indique une tendance des taux longs plus bas que les taux courts, alors une prédiction de l'augmentation de l'inflation.
+
+    \item \textbf{2023 (rouge foncé)}\\ 
+    C'est la deuxième courbe de la graphique qui a une forme inversée notable. L'explication est simple, l'inflation a augmenté comme dans les années 1990 et la Banque ont fait l'effort de la contrôler.
+ \end{itemize}
+\newpage
+  
+En général, on peut appuyer sur 3 phénomènes principals de la graphique:
+\begin{itemize}
+    \item \textbf{L'effondrement des taux d'intérêts sur 30 ans}\\
+    On note une chute continue des taux d'intérêts au cours du temps. On peut voir clairement un passage d'un monde à inflation très forte et taux élevés à un monde de taux presque nuls.\\
+
+    La Revue da la Banque du Canada donne quelques explications possibles:
+    \begin{itemize}
+        \item Désinflation durable.
+        \item Gains de productivité faibles alors la croissance potentielle baisse.
+        \item Vieillissement démographique alors l'épargne mondiale est plus abondante et donc la baisse des taux longs.
+        \item Mondialisation et des faibles coûts du capital.
+    \end{itemize}
+
+    \item \textbf{Période de stagnation 2010-2019}\\
+    C'est une période assez longue où les marchés étaient dans une mode "sleep". On note des taux directeurs presque nuls, l'inflation et croissance des taux longs très faibles et pas beaucoup de volatilité dans les marchés. Cela montre un niveau de prudence incroyable de la Banque pour complètement prévenir une autre crise financière.
+
+    \item \textbf{L'inversion des courbes}\\
+    On peut voir clairement dans les 2 périodes 1990 et 2023 qu'il y avait un augmente assez choquant de l'inflation. Évidemment, on note sur la graphique que ce sont dans ces 2 périodes dont la courbes zéro-coupon sont inversées. Ces 2 moments suivent une période de récession. Alors, cela montre un bon indicateur si notre économie est dans une récession ou pas.
+\end{itemize}
+
+
+La Revue de la Banque a aussi montré que ces phénomènes ne sont pas exclusifs au Canada mais en fait c'est une situation globale. La graphique ici est en fait juste une reflétion d'un mouvement mondial. Les explications sont aussi données:
+\begin{itemize}
+    \item Les économies développées comme les Étas-Unis, le Canada, l'Europe, etc... sont intégrées financièrement.
+    \item Les marchés des obligations d’État sont connectés par les opportunités d'arbitrages.
+    \item Les politiques monétaires des grandes banques centrales suivent des stratégies très similaires.
+\end{itemize}
+\newpage
+
+\section*{Partie 2 - Parité Couverte des Taux d'Intérêts}
+Le code utilisé pour générer des graphiques et de faire des calculations est dans la partie "Exo 2" du fichier MATLAB TP1.m
+\subsection*{Question 1,2,3}
+On utilise la formule donnée:
+
+\begin{align*}
+\Delta_{t}^{k} = \dfrac{F_t^k}{S_t}-\dfrac{1+i_t^k}{1+i_t^{k*}}
+\end{align*}
+Le problème ici est le choix de devise intérieure (EUR ou USD), c'est un choix "abstrait". Pour cet exercice, on veut recréer des résultats du cours alors c'est préferable qu'on puisse échanger une devise intérieure à $\dfrac{1}{S_t}$ devise étrangère. Dans notre fichier de données, $1 \ \text{EUR}=S_t \ \text{USD}$ alors on va prendre l'USD comme devise intérieure et l'EUR comme devise étrangère.
+
+
+Voici la graphique de la déviation CIP (Covered Interest Parity):
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{CIP.png}
+    \caption{Courbe déviation CIP entre USD-EUR, terme à 3 mois }
+\end{figure}
+\FloatBarrier
+
+On note 2 périodes très différentes: avant 2008 où il y avait la crise financière et après 2008.\\
+\textbf{Pré-crise}, c'est claire que la CIP tient. On note des fluctuations autour de 0 alors il existe encore des opportunités d'arbitrages mais le profit est très faible et donc négligable.\\
+Par contre, \textbf{post-crise}, on peut voir que la CIP ne tient pas du tout, spécialement juste après la crise. La déviation reste élevée de 2008 à 2012 où on note une tendance décroissante. En tout cas, cette période était parfaite pour les arbitrageurs de faire de l'argent. Et il faut noter aussi qu'on est en train d'analyser la marché devise EUR-USD qui est une marché géante de niveau mondiale. Le fait qu'il existait des opportunités d'arbitrages dans une telle marché est très intéressant.
+
+\newpage
+\subsection*{Question 4}
+On commence par le cas $\Delta < 0$. Évidemment, cela implique qu'il y a une opportunité d'arbitrage mais on peut analyser un peu plus loin.
+Comme $\Delta < 0$, on a:
+
+\begin{align*}
+\dfrac{F_t^k}{S_t} &< \dfrac{1+i_t^k}{1+i_t^{k*}} \\
+\Longrightarrow \ \  \dfrac{F_t^k}{S_t}(1+i_t^{k*}) &<1+i_t^k \\
+\Longrightarrow \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \    0 &<(1+i_t^k) - \dfrac{F_t^k}{S_t}(1+i_t^{k*})\\
+\Longrightarrow \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \   0 &<-\Delta_t^k(1+i_t^{k*})
+\end{align*}
+
+On peut voir que $-\Delta_t^k(1+i_t^{k*})$ est la quantité de profit atteignable avec la stratégie d'arbitrage. Il faut noter aussi l'unité de cette quantité et c'est en devise étrangère donc en EUR.
+
+Pour obtenir ce profit, on peut utiliser cette stratégie d'arbitrage:
+\begin{itemize}
+    \item Emprunter $\dfrac{F_t^k}{S_t}$ dévise étrangère (EUR) à taux $i_t^{k*}$ .
+    \item Échanger en dévise intérieure (USD). On a maintenant $F_t^k$ USD.
+    \item Investir à taux $i_t^k$. Notre gain sera $F_t^k(1+i_t^k)$ USD
+    \item Vendre le gain dans la marché à terme contre la devise étrangère. On aura  $\dfrac{F_t^k}{F_t^k}(1+i_t^k)=(1+i_t^k)$ EUR
+    \item Après 3 mois, récuperer la devise étrangère de la vente et puis payer l'emprunt à terme. On a finalement $(1+i_t^k) - \dfrac{F_t^k}{S_t}(1+i_t^{k*})$ EUR
+\end{itemize}
+
+
+Pour le cas\, $\Delta > 0$, on fait la même chose:
+\begin{align*}
+\dfrac{F_t^k}{S_t} &> \dfrac{1+i_t^k}{1+i_t^{k*}} \\
+\Longrightarrow \ \ \ \ \ \ \ \ \ \ \ \ \ \   \dfrac{F_t^k}{S_t}(1+i_t^{k*}) &>1+i_t^k \\
+\Longrightarrow \dfrac{F_t^k}{S_t}(1+i_t^{k*})-(1+i_t^k)  &>0\\
+\Longrightarrow \ \ \ \ \ \ \ \ \ \ \ \ \ \     \Delta_t^k(1+i_t^{k*}) &>0
+\end{align*}
+
+Dans ce cas, il faut noter que l'unité du profit est en dévise intérieure donc en USD. La stratégie d'arbitrage est:
+\begin{itemize}
+    \item Emprunter $1$ dévise intérieure (USD) à taux $i_t^{k}$ .
+    \item Échanger en dévise intérieure (EUR). On a maintenant $\dfrac{1}{S_t}$ EUR.
+    \item Investir à taux $i_t^{k*}$. Notre gain sera $\dfrac{1}{S_t}(1+i_t^{k*})$ EUR
+    \item Vendre le gain dans la marché à terme contre la devise intérieure. On aura  $\dfrac{F_t^k}{S_t}(1+i_t^{k*})$ USD
+    \item Après 3 mois, récuperer la devise étrangère de la vente et puis payer l'emprunt à terme. On a finalement $\dfrac{F_t^k}{S_t}(1+i_t^{k*})-(1+i_t^{k})$ USD
+\end{itemize}
+
+\newpage
+\subsection*{Question 5,6}
+On note que la stratégie décrite ici est la même du cas $\Delta>0$. Voici la graphique du profit:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{profit1.png}
+    \caption{Courbe profit de la stratégie d'arbitrage cas Prix Mid seulement}
+\end{figure}
+\FloatBarrier
+
+C'est clair qu'il y a une forte corrélation entre $\Delta$ et le profit. L'explication est simple, le profit dépend de $\Delta$ et le taux d'échange à terme de la dévise étrangère. Comme ce taux ne change pas beaucoup au cours du temps, l'influence du taux sur le profit est faible et donc il reste que le $\Delta$ qui sera l'élément principal du profit.
+
+Maintenant, si on change l'hypothèse et on utilise les prix Forward Bid et Spot Ask, notre courbe de profit devient:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{profit2.png}
+    \caption{Courbe profit de la stratégie d'arbitrage cas Forward Bid + Spot Ask}
+\end{figure}
+\FloatBarrier
+
+Encore une fois, on peut séparer la graphique en 2 période pré-crise et post-crise. Dans le cas pré-crise, la stratégie ne survive pas et on perd le profit ou même perd l'argent. Par contre, dans la période post-crise, la stratégie survive, on peut encore faire des profits avec une stratégie relativement simple. On peut conclure que le CIP ne tient pas du tout même avec les coûts de transaction (prix bid et ask) et les opportuinités d'arbitrages existent encore.
+
+\newpage
+\subsection*{Question 7}
+Pour expliquer ce phénomène de forte déviation CIP post-crise, le papier de Du et al. nous donne 2 hypothèse et leures explications. On va citer ici ces 2 raisons:
+
+"Nous émettons l'hypothèse que les écarts persistants du CIP peuvent s'expliquer par la combinaison de:
+\begin{itemize}
+    \item Des contraintes pesant sur les intermédiaires financiers suite à la crise.
+    \item Des déséquilibres internationaux persistants entre la demande d'investissement et l'offre de financement entre les devises.
+\end{itemize}
+Si les intermédiaires financiers n'étaient pas contraints, l'offre de couverture de change devrait être parfaitement élastique et tout écart du CIP devrait être arbitré. De même, si la demande mondiale de financement et d'investissement était équilibrée entre les devises, il n'y aurait aucune demande de swaps de change de la part des clients pour transformer la liquidité de financement ou les opportunités d'investissement entre les devises, et la base interdevises serait donc nulle, quelle que soit l'offre de couverture de change. Le coût de l'intermédiation financière peut expliquer pourquoi la base n'est pas arbitrée après la crise. Les déséquilibres entre l'épargne et l'investissement entre les devises peuvent expliquer la relation systématique entre la base et les taux d'intérêt nominaux."
+
+\newpage
+\section*{Partie 3 - Parité Couverte des Taux d'Intérêts (cont)}
+Le code utilisé pour générer des graphiques et de faire des calculations est dans la partie "Exo 3" du fichier MATLAB TP1.m
+\subsection*{Question 1}
+Pour les notations, la terme $f_t^k - s_t$  est "LogDiffForwardSpot" et la terme $i_t^k-i_t^{k*}$ est "DiffExRate". De plus,le coefficient (Intercept) est $\alpha$ et donc le coefficient DiffExRate est $\beta$.
+
+Voici les 2 sommaires des 2 modèles fittés sur les données des 2 périodes:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{lm_before.png}
+    \caption{Sommaire du modèle régression sur les données pré-crise}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{lm_after.png}
+    \caption{Sommaire du modèle régression sur les données post-crise}
+\end{figure}
+\FloatBarrier
+
+On commence par le cas pré-crise. On note que les valeurs $\alpha$ et $\beta$ sont proches de $0$ et $1$ ce qui nous donne l'impression que la condition CIP tient et il n'y a pas d'opportunités d'arbitrages. En réalité, on note que les 2 valeurs ne sont pas exactement $0$ et $1$ mais la différence est légère. On a enfin la même observation que celle de la graphique déviation CIP.
+
+Pour l'autre cas, c'est clair les valeurs $\alpha$ et $\beta$ sont différentes de $0$ et $1$ et aussi ces différences sont plus significatives que celles du modèle pré-crise. Cela implique évidemment que la condition CIP ne tient pas et il existe des opportunités d'arbitrages.
+
+\newpage
+\subsection*{Question 2}
+
+Pour la valeur $\alpha$ on propose le test suivant:
+\begin{itemize}
+    \item $H_0:\alpha=0$
+    \item $H_0:\alpha\neq 0$
+\end{itemize}
+
+Pour réaliser ce test, on peut utiliser le test "two tailed t test" avec $\alpha_0=0$
+
+Si on rejète l'hypothèse nulle, c-à-d $\alpha$ est non nulle, cela indique l'existence d'un biais systématique dans le taux à terme. Ce biais peut être soit une prime de risque ou des coûts de transactions. 
+
+Pour la valeur $\beta$ on propose le test suivant:
+\begin{itemize}
+    \item $H_0:\beta=1$
+    \item $H_1:\beta\neq 1$
+\end{itemize}
+
+Pour réaliser ce test, on peut utiliser le test "two tailed t test" mais avec $\beta_0=1$
+
+Si on rejète l'hypothèse nulle, c-à-d $\beta \neq 1$, cela indique que la prime à terme (forward prime) ne prédit pas correctement le prix spot dans le futur. Les agents peuvent donc exploiter ce fait pour créer des opportunités d'arbitrages pour avoir plus de rendements.
+
+Pour les termes d'erreures, on fait le test suivant:
+\begin{itemize}
+    \item $H_0:$ les erreurs sont non corrélés
+    \item $H_1:$ les erreurs sont corrélés
+\end{itemize}
+
+Pour réaliser ce test, on applique le test Durbin-Watson.
+
+Si on rejète l'hypothèse nulle, c-à-d les erreurs sont corrélés, cela indique que le taux à terme n’intègre pas immédiatement toutes les informations pertinentes et donc cela rend la marché inefficace. Cela peut alors devenir un indicateur de l'existence des opportunités d'arbitrages.
+
+En général, ces 3 tests aident à vérifier la condtion CIP empiriquement. Si on rejète des hypothèses nulles, cela peut indiquer une marché inefficace.
+
+\newpage
+\subsection*{Question 3}
+On va faire les 3 tests sur les 2 modèles. On commence par le test sur $\alpha$.
+Les 2 sommaires montrées dans la Question 1 ont a déjà donné les valeurs des T-statistiques et des p-valeurs pour le t-test. Les p-valeurs sont presque 0 dans les 2 cas alors on peut conclure qu'il existe des biais systémmatique comme des coûts de transactions dans la marché pour les 2 périodes. Par contre, on peut noter qua la valeur $\alpha$ estimée est beaucoup plus grande dans la période post-crise alors ces coûts sont plus élevés.\\~\\
+
+
+
+Maintent pour le test sur $\beta$. On ne peut pas utiliser les valeurs tStat et pValue des sommaires parce que par défaut, la fonction fait des tests avec l'hypothèse que le coefficient est nul ou pas pour tester si une variable de la régression est significative ou pas. Alors il faut qu'on calcule nous même des T-statistiques et p-valeurs.\\
+Dans le modèle pré-crise, on a obtenu une T-statistique de $13.06511554698988$ et une p-valeur de $0$\\
+Dans le modèle post-crise, on a obtenu une T-statistique de $117.391820958566999$ et une p-valeur aussi de $0$\\
+On peut alors conclure que les 2 valeurs de $\beta$ sont différentes de $1$ et donc la marché dans les 2 périodes ne sont pas efficaces. Par contre, la conclusion n'est pas satisfaisante parce qu'on doit prendre en compte l'échelle et la taille de cette différence. Comme on a beaucoup d'observations, on est assez certain sur la valeur des coefficients. Alors, c'est possible de voir que la valeur $\beta$ dans le cas pré-crise ($1.0121$) n'est pas très loin de 1 et on peut interpréter cette différence comme la marge de profit. Si cette marge est trop petite, même si l'arbitrage existe, c'est négligable et la marché reste "suffisamment efficace". Par contre pour la marché post-crise, la marge est significative et on revient à des observations faites sur la graphique de déviation CIP.\\~\\
+
+Finalement pour le test Durbin-Watson sur les erreurs, on peut le faire directement dans MATLAB. On a obtenu une p-valeur de $0$ pour les 2 modèles. Alors, on rejète l'hypothèse nulle et on peut conclure qu'il existe des opportunités d'arbitrages. En réalité, ce test n'est pas suffisant pour confirmer l'existence des opportunités d'arbitrages dans les 2 périodes. C'est une conclusion techniquement correcte, mais on a déjà vu que les opportunités d'arbitrages sont très faibles dans le cas pré-crise, surtour si on prend en compte des prix BID et ASK. Si on voit le problème dans le contexte statistique, le test Durbin-Watson est un test très strict, c-à-d la majorité des données rejète l'hypothèse nulle de ce test. Par contre, même si les termes d'erreures sont corrélées, on a aussi trouvé que les autres tests marchent encore. C'est vrai que dans le context économique, c'est plus important que les erreurs soient non-corrélés mais c'est très rare d'avoir des observations qui suivent cette condition parfaitement. Alors, c'est important qu'on n'utilise pas ce test comme un indicateur définitive mais plus un aide à déterminer l'efficacité des marchés.
+
+\end{document}/
+
+

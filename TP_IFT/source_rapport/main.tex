@@ -1,0 +1,274 @@
+
+% On définit le type de document, de papier et la grosseur des caractères.
+\documentclass[letterpaper,11pt]{article}
+
+% Trois lignes liées à l'ordinateur avec lequel on produit le document.
+\usepackage[utf8]{inputenc}
+\usepackage{titling}
+\usepackage{amsthm}
+
+% Highlight text
+\usepackage{soul} % for the command \hl
+
+% Bibliographie
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{Bib1.bib}
+
+\usepackage{dsfont}
+\usepackage{layout}
+\usepackage{cancel}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[document]{ragged2e}
+\usepackage[top=2cm,bottom=2cm,left=2.5cm,right=2.5cm,includehead=true,headheight=1cm]{geometry}%Pour ajustement des marges.
+\usepackage{amsbsy}%Accès à des symboles mathématiques
+\usepackage{amsfonts}%Accès à des symboles mathématiques
+\usepackage{amssymb}%Accès à des symboles mathématiques
+\usepackage{bm}%Pour mettre en gras n'importe quel symbole.
+\usepackage{enumerate}%Pour les listes d'énumération.
+\usepackage{parskip}%Pour pouvoir modifier l'espace entre les paragraphes.
+\usepackage{setspace}%Pour pouvoir modifier l'espace entre les lignes.
+\usepackage{upgreek}%Pour accéder aux lettres grecques en romain.
+\usepackage[b]{esvect}%Permet de créer des vecteurs.
+\usepackage{wasysym}
+\usepackage{afterpage}
+\usepackage{ stmaryrd }
+\usepackage{minted}
+\usepackage{mathtools}
+\usepackage{placeins}
+\usepackage{hyperref}
+
+%Symboles fréquents
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\?}{\stackrel{?}{=}}
+\let\epsilon\varepsilon
+\newcommand{\der}{\text{d}}
+
+%Mettre en gras ET italique le paramètre de la fonction
+\newcommand{\gras}[1]{\textbf{\textit{#1}}} 
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}%page vierge
+
+
+\newcommand{\probVar}[1]{\text{Var}\left(#1\right)} %Variance
+\newcommand{\probCov}[1]{\text{Cov}\left(#1\right)} %Variance
+\newcommand{\probP}[1]{\mathds{P}\left{#1\right}} %P de probabilités
+\newcommand{\probE}[1]{\mathbb{E}\left[#1\right]} %E de espérance
+
+\usepackage{hyperref}%'Linker' des équations et sources
+
+%Les quatre lignes qui suivent définissent l'espace entre les paragraphes, l'indentation, l'espace entre les lignes et la distance entre une boite et ce qu'elle contient.
+\parskip=10pt 
+\parindent=0pt
+\onehalfspacing
+\fboxsep=9pt
+
+%Parenthèses
+\newcommand{\bgl}{\bigl(}
+\newcommand{\Bgl}{\Bigl(}
+\newcommand{\bggl}{\biggl(}
+\newcommand{\Bggl}{\Biggl(}
+\newcommand{\bgr}{\bigr)}
+\newcommand{\Bgr}{\Bigr)}
+\newcommand{\bggr}{\biggr)}
+\newcommand{\Bggr}{\Biggr)}
+
+\renewcommand\thesection{\arabic{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.3\textwidth]{udem.png}\par\vspace{1cm} % Replace with your logo file
+    {\scshape\LARGE Université de Montréal \par}
+    \vspace{1cm}
+    {\scshape\Large Département d’Informatique et de Rechercher Opérationnelle\par}
+    \vspace{1.5cm}
+    {\huge\bfseries Rapport Devoir 1\par}
+    \vspace{1.5cm}
+    {\Large\itshape Nguyen-Xuan-Bach Bui\par}
+    \vfill
+    {\Large IFT6512 - Programmation stochastique\par}
+\end{titlepage}
+
+\section*{Partie 1}
+Ici, on utilise des définitions et aussi la preuve d'une proposition dans la chapitre 4 de la livre de référence de Birge et Louveaux \cite{book} .\\~\\
+Soit {$\boldsymbol{\xi}$} une variable aléatoire dont les réalisations correspondent à des différentes scénarios. On reprend les notations dans le cours puis on définit:
+
+\begin{equation*}
+\begin{aligned}
+    min \ &z(x,\xi)=c^Tx+min\{q^Ty \ | \ Wy=h-Tx, \ y\geq0 \}\\
+    \textbf{s.t} \ &Ax=b\\
+    &x\geq0
+\end{aligned}
+\end{equation*}
+comme le problème d'optimization d'une scénario $\xi$. On assume aussi que $\forall \xi \in \Xi, \ \exists x\in\mathfrak{R}^{n_1}, z(x,\xi)<\infty$. Cela implique que pour tout $\xi$ possible, il existe une solution réalisable (feasible solution) et donc une solution optimale (optimal solution). Soit $\bar{x}(\xi)$ une solution du problème $z$. On définit maintenant 3 approches à solver ce problème.
+\begin{itemize}
+    \item \textbf{Attends-et-voir solution (Wait-and-see solution/WS)}\\
+    \begin{equation*}
+\begin{aligned}
+    WS&= \E_{\boldsymbol{\xi}}[min \ z(x,\xi)]\\
+    &=\E_{\boldsymbol{\xi}}(z(\bar{x}(\boldsymbol{\xi}),\boldsymbol{\xi})
+\end{aligned}
+\end{equation*}
+
+    \item \textbf{Problème de recours (Recours problem/RP)}\\
+    \begin{equation*}
+\begin{aligned}
+    RP&= min \ \E_{\boldsymbol{\xi}}z(x,\boldsymbol{\xi})\\
+\end{aligned}
+\end{equation*}
+
+
+    \item \textbf{Problème de la valeur d'espérance (Expected value problem/EV)}\\
+    Soit $\bar{\xi} = \E[\boldsymbol{\xi}] $:
+    \begin{equation*}
+\begin{aligned}
+    EV&= min \ z(x,\bar{\xi})
+\end{aligned}
+\end{equation*}\\
+On définit aussi l'espérance de l'utilisation de la solution de la valeur d'espérance (Expected result of the expected value problem/EEV) comme:
+
+\begin{equation*}
+\begin{aligned}
+    EEV&= \E_{\boldsymbol{\xi}}(z(\bar{x}(\bar{\xi}),\boldsymbol{\xi})
+\end{aligned}
+\end{equation*}\\
+\end{itemize}
+Finalement, on définit la valeur de l'information parfaite (Expected value of perfection information/EVPI) comme la différence entre le problem de recours et la solution wait-and-see $EVPI = RP-WS$\\
+De même façon, on définit la valeur de la solution stochastique (Value of stochastic solution/VSS) comme la différence entre le problème d'espérance et le problème de recours $VSS = EEV-RP$
+
+On cite maintenant la propostion et l'épreuve de la livre de Birge et Louveaux:
+\begin{equation*}
+    WS\leq RP \leq EEV
+\end{equation*}
+\textbf{PREUVE:}\\
+Soit $x^*$ la solution optimale du problème de recours. Pour tout réalisation $\xi$, comme $x^*$ est juste la solution optimale du problème de recours et pas le problème d'optimization, on a cette relation $z(\bar{x}(\xi),\xi)\leq z(x^*,\xi)$. Prenos l'espérance sur $\boldsymbol{\xi}$ aux 2 côtés et on a  $WS\leq RP$.\\
+De même façon, on sait que $x^*$ est la solution optimale du problème de recours alors que $\bar{x}(\bar{\xi})$ est juste une solution quelconque du problème de recours, on a cette relation $z(x^*,\xi)\leq z(\bar{x}(\bar{\xi}),\xi)$. Prenos l'espérance sur $\boldsymbol{\xi}$ aux 2 côtés et on a $RP\leq EEV$.\\
+
+En utilisant cette proposition et les 2 défintions de $EVPI$ et $VSS$, on peut voir que ces 2 valeurs sont toujours non-négatives. \qedsymbol
+
+\newpage
+\section*{Partie 2}
+\subsection*{Question a}
+\begin{itemize}
+    \item \textbf{Décisions de première étape}\\
+    Il y a seulement une décision à faire et c'est le nombre de camions l'entreprise veut réserver. La variable est $x$
+    \item \textbf{Décisions de recours}\\
+    Techniquement, il y a 2 décisions de recours mais spécifiquement dans ce problème, une décision n'a aucun effet. On présente les 2 pour pour des raisons d'exhaustivité et pour mieux justifier la question $d$ après.
+        \begin{itemize}
+            \item Décision de combien de camions à louer après la réalisation de la demande.
+            \item Décision de combien de camions à revendre après la réalisation de la demande. Comme le prix de revendre est $0$, cette décision sert à rien. 
+        \end{itemize}
+\end{itemize}
+\subsection*{Question b}
+On définit la décision de combien de camions à louer avec la variable $y(\omega)$ et la décision de combien de camions à revendre avec la variable $z(\omega)$. Pour des raisons de simplicité, parfois, on va juste utiliser $y$ et $z$
+\subsection*{Question c}
+Le programme à deux étapes avec recours est:
+\begin{equation*}
+\begin{aligned}
+min \ 100&x+ \E_{\xi}[min \ 150y(\omega)+ 0z(\omega)]\\
+\textbf{s.t} \ \ &x+y(\omega)-z(\omega) = D(\omega)\\
+&x\geq0, \ y(\omega)\geq0, z(\omega)\geq0
+\end{aligned}
+\end{equation*}
+
+\subsection*{Question d}
+Le recours dans ce programme est simple. Par définition dans (\cite{book,web}), la raison est parce que la matrice de recours $W=[1 \ -1]$. Si on considère la contrainte principale:
+\begin{equation*}
+\begin{aligned}
+&&x+y(\omega)-z(\omega) &= D(\omega)\\
+&\Longrightarrow &y(\omega)-z(\omega) &=D(\omega)-x 
+\end{aligned}
+\end{equation*}
+De plus, pour les coefficients de recours $q(\omega)$, on a $150+0=150\geq0$. Alors, la décision optimale pour $y$ et $z$ peut être déterminé par la sign de $D(\omega)-x $. Cela semble logique car on a 2 scénarios après la réalisation de la demande, on a réservé assez de camions ou pas.\\
+Comme le recours est simple, c'est aussi complet et relativement complet.
+\subsection*{Question e}
+Le code Julia pour résoudre le programme est dans le fichier notebook "TP1.ipynb".
+
+\newpage
+\section*{Partie 3}
+\textbf{NOTE:} La défition de la fonction de recours est un peu flou. Normalement, c'est la fonction $Q(x,\xi)$ qui est appelée la fonction de recours (recourse function) et $\mathcal{Q}(x) = \E_{\xi}[Q(x,\xi)]$ l'espérance de la fonction de recours (expected recourse function).
+Par contre, dans la livre de référence de Birge et Louveaux, ils ont défini $\mathcal{Q}(x)$ la fonction de recours. Pour éviter toute confusion, on a choisi de suivre la livre de référence et de tracer la fonction $\mathcal{Q}(x) = \E_{\xi}[Q(x,\xi)]$.\\~\\
+
+On commence par définir les variables des décisions:
+\begin{itemize}
+    \item $x$ la décision de première étape.\\
+    \item $y(\omega)$ la décision de recours à acheter des unités extra au prix spot.\\
+    \item $z(\omega)$ la décision de recours à payer la pénalité pour pénurie de chaque unité.
+\end{itemize}
+Le programme à deux étapes avec recours est:
+\begin{equation*}
+\begin{aligned}
+min \ 20&x+ \E_{\omega}[min \ 50y(\omega)+ 100z(\omega)]\\
+\textbf{s.t} \ \ &x+y(\omega)+z(\omega) \geq D(\omega)\\
+&z(\omega) \leq D(\omega) - x\\
+&0\leq x\leq100, \ y(\omega)\geq0, z(\omega)\geq0
+\end{aligned}
+\end{equation*}
+
+Avant de déterminer $Q(x,D)$, on peut simplifier le problème avec quelques raisonnements:
+\begin{itemize}
+    \item Si $x\geq D(\omega)$, on a bien répondu aux demandes et donc ce n'est pas nécessaire d'acheter au prix spot ou payer pour la pénurie. Alors, dans ce cas, $y(\omega)=z(\omega)=0$ et $Q(x,D) = 0$
+    \item Si $x <D(\omega)$, soit on achète au prix spot pour répondre aux demandes, soit on paie pour la pénurie. Comme c'est fixé les 2 coûts (50 et 100 respectivement), on n'a aucune raison de payer pour la pénurie. Alors, dans ce cas, $z(\omega)=0$,$y(\omega)=D(\omega)-x$ et $Q(x,D) = 50y(\omega)=50(D(\omega)-x)$
+\end{itemize}
+
+Le programme peut être simplifié maintenant:
+\begin{equation*}
+\begin{aligned}
+min \ 20&x+ \E_{x}[min \ 50y(\omega)]\\
+\textbf{s.t} \ \ &x+y(\omega) =D(\omega)\\
+&x\geq0, \ y(\omega)\geq0
+\end{aligned}
+\end{equation*}
+C'est évident que c'est un programme avec recours simple et donc la fonction de recours a juste 2 cas qui dépendent de la signe de $D(\omega)-x$:
+\begin{equation*}
+    Q(x,D)= \begin{cases} 
+      0 & x\geq D(\omega) \\
+      50(D(\omega)-x) & x<D(\omega) \\
+   \end{cases}=max(0,50(D(\omega)-x))
+\end{equation*}
+Une fois que $Q(x,D)$ est bien défini, on peut aussi déterminer $\mathcal{Q}(x)$ et la fonction objectif. Voici la graphique:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{plot.png}
+    \caption{Graphe de $\mathcal{Q}(x)$ et la fonction objectif}
+\end{figure}
+\FloatBarrier
+Comme on cherche à minimiser le coût, on choisit $x$ tel que la graphe de la fonction objectif est le plus bas. Alors, $x^*=60$
+
+\newpage
+\section*{Références + Utilisation de l'intelligence artificielle}
+
+\printbibliography
+
+\subsection*{Utilisation de l'intelligence artificielle}
+J'ai utilisé l'IA pour:
+\begin{itemize}
+    \item Vérifier si la deuxième décision de recours dans le problème de la partie 2 est toujours considérée comme une décision lorsque le coût de récupération des camions d'extras est de 0. La réponse était oui mais c'est mieux si j'explique le contexte plus loin. De plus, c'est plus claire d'inclure cette décision quand je vérifie que le recours est simple.
+    \item Faire des sommaires dans (\cite{book}).
+    \item Chercher des informations pertinents sur l'internet pendant le travail. L'IA a trouvé \cite{web}.
+    \item Aide avec des syntaxes de Julia pour tracer la graphe dans la partie 3.
+    \item Aide avec des syntaxes de Latex pour écrire ce rapport.
+\end{itemize}
+Le contenu de ce rapport est écrit sans utilisation de l'IA. La partie code Julia sur les modèles d'optimization est basée sur \cite{web2}
+\end{document}/
+
+
