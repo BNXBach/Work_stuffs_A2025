@@ -107,8 +107,10 @@ sorting=ynt
     {\Large IFT6512 - Programmation stochastique\par}
 \end{titlepage}
 
+All codes are available at \url{https://github.com/BNXBach/Work_stuffs_A2025/tree/main/TP_IFT}
+
 \section*{Partie 1}
-Ici, on utilise des définitions et aussi la preuve d'une proposition dans la chapitre 4 de la livre de référence de Birge et Louveaux \cite{book} .\\~\\
+Ici, on utilise des définitions et aussi la preuve d'une proposition dans la chapitre 4 de la livre de Birge et Louveaux \cite{book} .\\~\\
 Soit {$\boldsymbol{\xi}$} une variable aléatoire dont les réalisations correspondent à des différentes scénarios. On reprend les notations dans le cours puis on définit:
 
 \begin{equation*}
@@ -154,7 +156,7 @@ On définit aussi l'espérance de l'utilisation de la solution de la valeur d'es
 Finalement, on définit la valeur de l'information parfaite (Expected value of perfection information/EVPI) comme la différence entre le problem de recours et la solution wait-and-see $EVPI = RP-WS$\\
 De même façon, on définit la valeur de la solution stochastique (Value of stochastic solution/VSS) comme la différence entre le problème d'espérance et le problème de recours $VSS = EEV-RP$
 
-On cite maintenant la propostion et l'épreuve de la livre de Birge et Louveaux:
+On cite maintenant la propostion et l'épreuve de la livre de Birge et Louveaux \cite{book}:
 \begin{equation*}
     WS\leq RP \leq EEV
 \end{equation*}
@@ -200,12 +202,12 @@ Le recours dans ce programme est simple. Par définition dans (\cite{book,web}),
 De plus, pour les coefficients de recours $q(\omega)$, on a $150+0=150\geq0$. Alors, la décision optimale pour $y$ et $z$ peut être déterminé par la sign de $D(\omega)-x $. Cela semble logique car on a 2 scénarios après la réalisation de la demande, on a réservé assez de camions ou pas.\\
 Comme le recours est simple, c'est aussi complet et relativement complet.
 \subsection*{Question e}
-Le code Julia pour résoudre le programme est dans le fichier notebook "TP1.ipynb".
+Le code Julia pour résoudre le programme est dans le notebook \href{https://github.com/BNXBach/Work_stuffs_A2025/blob/main/TP_IFT/TP1.ipynb}{TP1.ipynb}.
 
 \newpage
 \section*{Partie 3}
 \textbf{NOTE:} La défition de la fonction de recours est un peu flou. Normalement, c'est la fonction $Q(x,\xi)$ qui est appelée la fonction de recours (recourse function) et $\mathcal{Q}(x) = \E_{\xi}[Q(x,\xi)]$ l'espérance de la fonction de recours (expected recourse function).
-Par contre, dans la livre de référence de Birge et Louveaux, ils ont défini $\mathcal{Q}(x)$ la fonction de recours. Pour éviter toute confusion, on a choisi de suivre la livre de référence et de tracer la fonction $\mathcal{Q}(x) = \E_{\xi}[Q(x,\xi)]$.\\~\\
+Par contre, dans la livre de Birge et Louveaux \cite{book}, ils ont défini $\mathcal{Q}(x)$ la fonction de recours. Pour éviter toute confusion, on a choisi de suivre la livre de référence et de tracer la fonction $\mathcal{Q}(x) = \E_{\xi}[Q(x,\xi)]$.\\~\\
 
 On commence par définir les variables des décisions:
 \begin{itemize}
@@ -253,6 +255,8 @@ Une fois que $Q(x,D)$ est bien défini, on peut aussi déterminer $\mathcal{Q}(x
 \end{figure}
 \FloatBarrier
 Comme on cherche à minimiser le coût, on choisit $x$ tel que la graphe de la fonction objectif est le plus bas. Alors, $x^*=60$
+
+On peut vérifier cette solution graphique avec le programme Julia dans le notebook \href{https://github.com/BNXBach/Work_stuffs_A2025/blob/main/TP_IFT/TP1.ipynb}{TP1.ipynb}.
 
 \newpage
 \section*{Références + Utilisation de l'intelligence artificielle}
