@@ -1,0 +1,296 @@
+
+% On définit le type de document, de papier et la grosseur des caractères.
+\documentclass[letterpaper,11pt]{article}
+
+% Trois lignes liées à l'ordinateur avec lequel on produit le document.
+\usepackage[utf8]{inputenc}
+\usepackage{titling}
+\usepackage{amsthm}
+
+% Highlight text
+\usepackage{soul} % for the command \hl
+
+% Bibliographie
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{Bib1.bib}
+
+\usepackage{dsfont}
+\usepackage{layout}
+\usepackage{cancel}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[document]{ragged2e}
+\usepackage[top=2cm,bottom=2cm,left=2.5cm,right=2.5cm,includehead=true,headheight=1cm]{geometry}%Pour ajustement des marges.
+\usepackage{amsbsy}%Accès à des symboles mathématiques
+\usepackage{amsfonts}%Accès à des symboles mathématiques
+\usepackage{amssymb}%Accès à des symboles mathématiques
+\usepackage{bm}%Pour mettre en gras n'importe quel symbole.
+\usepackage{enumerate}%Pour les listes d'énumération.
+\usepackage{parskip}%Pour pouvoir modifier l'espace entre les paragraphes.
+\usepackage{setspace}%Pour pouvoir modifier l'espace entre les lignes.
+\usepackage{upgreek}%Pour accéder aux lettres grecques en romain.
+\usepackage[b]{esvect}%Permet de créer des vecteurs.
+\usepackage{wasysym}
+\usepackage{afterpage}
+\usepackage{ stmaryrd }
+\usepackage{minted}
+\usepackage{mathtools}
+\usepackage{placeins}
+\usepackage{hyperref}
+
+%Symboles fréquents
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\?}{\stackrel{?}{=}}
+\let\epsilon\varepsilon
+\newcommand{\der}{\text{d}}
+
+%Mettre en gras ET italique le paramètre de la fonction
+\newcommand{\gras}[1]{\textbf{\textit{#1}}} 
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}%page vierge
+
+
+\newcommand{\probVar}[1]{\text{Var}\left(#1\right)} %Variance
+\newcommand{\probCov}[1]{\text{Cov}\left(#1\right)} %Variance
+\newcommand{\probP}[1]{\mathds{P}\left{#1\right}} %P de probabilités
+\newcommand{\probE}[1]{\mathbb{E}\left[#1\right]} %E de espérance
+
+\usepackage{hyperref}%'Linker' des équations et sources
+
+%Les quatre lignes qui suivent définissent l'espace entre les paragraphes, l'indentation, l'espace entre les lignes et la distance entre une boite et ce qu'elle contient.
+\parskip=10pt 
+\parindent=0pt
+\onehalfspacing
+\fboxsep=9pt
+
+%Parenthèses
+\newcommand{\bgl}{\bigl(}
+\newcommand{\Bgl}{\Bigl(}
+\newcommand{\bggl}{\biggl(}
+\newcommand{\Bggl}{\Biggl(}
+\newcommand{\bgr}{\bigr)}
+\newcommand{\Bgr}{\Bigr)}
+\newcommand{\bggr}{\biggr)}
+\newcommand{\Bggr}{\Biggr)}
+
+\renewcommand\thesection{\arabic{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.3\textwidth]{udem.png}\par\vspace{1cm} % Replace with your logo file
+    {\scshape\LARGE Université de Montréal \par}
+    \vspace{1cm}
+    {\scshape\Large Département d’Informatique et de Rechercher Opérationnelle\par}
+    \vspace{1.5cm}
+    {\huge\bfseries Rapport Devoir 2\par}
+    \vspace{1.5cm}
+    {\Large\itshape Nguyen-Xuan-Bach Bui\par}
+    \vfill
+    {\Large IFT6512 - Programmation stochastique\par}
+\end{titlepage}
+
+All codes are available at \url{https://github.com/BNXBach/Work_stuffs_A2025/tree/main/TP_IFT}
+
+\section*{Partie 1}
+On veut prouver que le programme master dans la décomposition régularisée et la méthode de la région de confiance sont équivalents. On commence par écrire les 2 programmes en les notant programme A et B:
+
+\begin{itemize}
+    \item \textbf{Programme A}: \\
+    \begin{equation*}
+\begin{aligned}
+min \ c^Tx + \sum_{k=1}^{K}\theta_k&+ \dfrac{1}{2}||x-a^{\nu}||_2^2\\
+\textbf{s.t} \ \ Ax&=b   \\
+D_lx &\geq d_l  \\
+E_{l(k)}x+\theta_k &\geq e_{l(k)}\\
+x &\geq 0
+\end{aligned}
+\end{equation*}
+
+\item \textbf{Programme B}: \\
+    \begin{equation*}
+\begin{aligned}
+min \ c^T&x + \sum_{k=1}^{K}\theta_k \\
+\textbf{s.t} \ \ Ax&=b   \\
+D_lx&\geq d_l  \\
+E_{l(k)}x+\theta_k&\geq e_{l(k)}\\
+||x-a^{\nu}||_2 &\leq \Delta_\nu\\
+x &\geq 0
+\end{aligned}
+\end{equation*}
+\end{itemize}
+
+Pour utiliser l'indice de l'exercice, on peut vite vérifier que:
+\begin{itemize}
+    \item Les 2 fonctions objectives sont convexes (mentionnées dans \cite{book}). 
+    \item La contrainte d'égalité est affine.
+    \item Les contraintes des coupes de réalisabilité et des coupes d'optimalité sont affines donc convexes.
+    \item La contrainte de la région de confiance est convexe.
+\end{itemize}
+
+Alors sous la condition de Slater, les conditions de KKT sont suffisantes et nécessaires pour qu'une solution soit optimale pour ces 2 programmes.\\
+Maintenant en reprenant les notations de l'indice (fonction $f$, $g$, $h$, etc...). On commence par le programme A:
+
+\begin{equation*}
+\begin{aligned}
+    KKT_A&= \begin{cases} 
+      0 \in \partial f_A(x_A^*) + \displaystyle\sum_{i=1}^{m}\lambda_i^{*}\partial g_i(x_A^*) +\displaystyle\sum_{j=1}^{p} \mu_j^{*}\Delta h_j(x_A^*) +N_X(x_A^*)   \\
+      g_i(x_A^*) \leq 0, \ \ h_j(x_A^*) = 0, \ \ \lambda_i^*\geq0, \ \ \lambda_i^*g_i(x_A^*)=0 \\
+   \end{cases} \\
+   &= \begin{cases} 
+      0 \in c+(x_A^*-a^\nu) + \displaystyle\sum_{i=1}^{m}\lambda_i^{*}\partial g_i(x_A^*) +\displaystyle\sum_{j=1}^{p} \mu_j^{*}\Delta h_j(x_A^*) +N_X(x_A^*)   \\
+      g_i(x_A^*) \leq 0, \ \ h_j(x_A^*) = 0, \ \ \lambda_i^*\geq0, \ \ \lambda_i^*g_i(x_A^*)=0 \\
+   \end{cases}
+\end{aligned}
+\end{equation*}
+
+Pour le programme B, on note d'abord qu'il a des mêmes contraintes que le programme A sauf la contrainte sur la région de confiance. C'est une inégalité alors sous les notations de l'indice, on a une fonction $g$ en plus et la fonction objective $f_B$ est aussi différente. De plus, pour simplifier le problème, on note aussi que la norme 2 est non négative et c'est une contrainte de type $\leq$ alors on peut réecire comme $\dfrac{1}{2}||x-a^\nu||^2 - \dfrac{1}{2}\Delta_\nu^2\leq 0 $  On a donc:
+
+\begin{equation*}
+\begin{aligned}
+    KKT_B&= \begin{cases} 
+      0 \in \partial f_B(x_B^*) + \displaystyle\sum_{i=1}^{m+1}\lambda_i^{*}\partial g_i(x_B^*) +\displaystyle\sum_{j=1}^{p} \mu_j^{*}\Delta h_j(x_B^*) +N_X(x_B^*)   \\
+      g_i(x_B^*) \leq 0, \ \ h_j(x_B^*) = 0, \ \ \lambda_i^*\geq0, \ \ \lambda_i^*g_i(x_B^*)=0 \\
+   \end{cases} \\
+   &= \begin{cases} 
+      0 \in c + \lambda_{m+1}^*\partial(\dfrac{1}{2}||x_B^*-a^\nu||^2 - \dfrac{1}{2}\Delta_\nu^2)+ \displaystyle\sum_{i=1}^{m}\lambda_i^{*}\partial g_i(x_B^*) +\displaystyle\sum_{j=1}^{p} \mu_j^{*}\Delta h_j(x_B^*) +N_X(x_B^*)   \\
+      g_i(x_B^*) \leq 0, \ \ h_j(x_B^*) = 0, \ \ \lambda_i^*\geq0, \ \ \lambda_i^*g_i(x_B^*)=0 \\
+   \end{cases}\\
+   &= \begin{cases} 
+      0 \in c + \lambda_{m+1}^*(x_B^*-a^\nu)+ \displaystyle\sum_{i=1}^{m}\lambda_i^{*}\partial g_i(x_B^*) +\displaystyle\sum_{j=1}^{p} \mu_j^{*}\Delta h_j(x_B^*) +N_X(x_B^*)   \\
+      g_i(x_B^*) \leq 0, \ \ h_j(x_B^*) = 0, \ \ \lambda_i^*\geq0, \ \ \lambda_i^*g_i(x_B^*)=0 \\
+   \end{cases}
+\end{aligned}
+\end{equation*}
+
+Pour démontrer l'équivalence, on va montrer qu'une solution optimale du programme A est aussi optimale pour le programme B avec une valeur $\Delta_\nu$. Puis, avec $\Delta_\nu$ fixé, on veut montrer qu'une solution optimale du programme B est aussi optimale pour le programme A. Alors, en conclusion, comme une solution optimale pour ce problème est unique (montré dans \cite{book}), les 2 problèmes ont la même solution optimale et donc ils sont équivalents. \\
+
+C'est important de noter ici que dans la direction $(A) => (B)$, on peut choisir $\Delta_\nu$ car on n'a pas encore fixé le programme $B$. Par contre, dans la direction $(B) => (A)$ on doit utiliser la même valeur $\Delta$ pour fixer le problème $B$ à celui dans la direction précédente.
+
+\subsection*{Direction $(A) => (B)$}
+Soit $(x_A^*,\theta_1^A,...,\theta_K^A)$ la solution optimale du programme $A$. Alors, les conditions $KKT_A$ sont valides. On vérifie si les conditions $KKT_B$ sont respectées. Si on garde toutes les coefficients $\lambda$ et $\mu$ de $KKT_A$ et on considère $\lambda_{m+1}^* =1 $, on retrouve la première ligne de la condition. Pour la deuxième ligne, il ne faut qu'observer cette condition:
+
+\begin{equation*}
+\begin{aligned}
+    &&\dfrac{1}{2}\lambda_{m+1}^*(||x_A^*-a^\nu||_2^2-\Delta_\nu^2) =& 0\\
+&\Rightarrow&   ||x_A^*-a^\nu||_2^2 =&\Delta_\nu^2\\
+&\Rightarrow& ||x_A^*-a^\nu||_2 =&\Delta_\nu
+\end{aligned}
+\end{equation*}
+
+Alors, avec cette valeur de $\Delta_\nu$, les conditions de $KKT_B$ sont satisfaites et donc la solution optimale du programme A est aussi optimale pour le programme B où $\Delta_\nu=||x_A^*-a^\nu||_2 $. 
+
+
+\subsection*{Direction $(B) => (A)$}
+Soit $(x_A^*,\theta_1^A,...,\theta_K^A)$ la solution optimale du programme $A$ et $(x_B^*,\theta_1^B,...,\theta_K^B)$ la solution optimale du programme $B$ et on fixe $\Delta_\nu = ||x_A^*-a^\nu||_2$. On note d'abord que l'ensemble des contraintes du programme A partient à l'ensemble des contraintes du programme B. Alors, toutes solutions de B sont réalisables dans le programme A (B est plus stricte). Alors, comme $(x_A^*,\theta_1^A,...,\theta_K^A)$ est optimale pour le programme A, on a:
+
+\begin{equation}
+c^Tx_A^*+\sum_{k=1}^{K}\theta_k^A+\dfrac{1}{2}||x_A^*-a^\nu||_2^2 \leq c^Tx_B^*+\sum_{k=1}^{K}\theta_k^B+\dfrac{1}{2}||x_B^*-a^\nu||_2^2
+\end{equation}
+
+Puis, comme $(x_B^*,\theta_1^B,...,\theta_K^B)$ est une solution du programme B, on a cette relation en raison de la contrainte de la région de confiance:
+\begin{equation*}
+\begin{aligned}
+    &&||x_B^*-a_\nu||&\leq \Delta_\nu\\
+    &\Rightarrow& ||x_B^*-a_\nu||&\leq ||x_A^*-a_\nu||\\\\
+\end{aligned}
+\end{equation*}
+
+On a donc:
+\begin{equation}
+    c^Tx_B^*+\sum_{k=1}^{K}\theta_k^B+\dfrac{1}{2}||x_B^*-a^\nu||_2^2 \leq c^Tx_B^*+\sum_{k=1}^{K}\theta_k^B+\dfrac{1}{2}||x_A^*-a^\nu||_2^2
+\end{equation}
+
+Ensuite, on a $||x_A^*-a^\nu||_2 \leq ||x_A^*-a^\nu||_2$ (évident), alors $(x_A^*,\theta_1^A,...,\theta_K^A)$ est aussi réalisable pour le programme B. De plus, comme $(x_B^*,\theta_1^B,...,\theta_K^B)$ est optimale pour le programme B, on a alors:
+\begin{equation}
+\begin{aligned}
+        c^Tx_B^*+\sum_{k=1}^{K}\theta_k^B &\leq c^Tx_A^*+\sum_{k=1}^{K}\theta_k^A \\
+  \Rightarrow \ \ \      c^Tx_B^*+\sum_{k=1}^{K}\theta_k^B+\dfrac{1}{2}||x_A^*-a^\nu||_2^2 &\leq c^Tx_A^*+\sum_{k=1}^{K}\theta_k^A+\dfrac{1}{2}||x_A^*-a^\nu||_2^2
+\end{aligned}
+\end{equation}
+En combinant (1), (2) et (3), on note une chaîne d'inégalités de type $\leq$ où la première et la dernière terme est la même. Alors, toutes les termes sont en fait égaux.\\ 
+Si on reprend (1), on peut voir que $min \ f_A=f_A(x_A^*,\theta_1^A,...,\theta_K^A) = f_A(x_B^*,\theta_1^B,...,\theta_K^B)$. Donc, $(x_B^*,\theta_1^B,...,\theta_K^B)$ est une solution optimale de A.\qedsymbol
+
+\textbf{NOTE:} Pour la direction $(B)=>(A)$, on n'a pas utilisé les conditions KKT pour la montrer parce que c'est beaucoup plus difficile de montrer que $\lambda_{m+1}^*=1$. Dans la direction $(A)=>(B)$, on n'a pas besoin de faire la démonstration parce qu'on reprend seulement $\lambda_1,...\lambda_m$ de $KKT_A$. Alors, on peut choisir $\lambda_{m+1}$ pour que la première condition de $KKT_B$ soit satisfaite. Dans la direction $(B)=>(A)$, on doit reprendre $\lambda_1,...\lambda_{m+1}$ de $KKT_B$ et donc pour retrouver $KKT_A$, il faut qu'on montre que $\lambda_{m+1}=1$.
+
+\newpage
+\section*{Partie 2}
+\subsection*{Implémentaion}
+L'implémentation de l'algorithme L-shaped multi-cut est dans le notebook \href{https://github.com/BNXBach/Work_stuffs_A2025/blob/main/TP_IFT/TP2/TP2-Multicut.ipynb}{TP2-Multicut.ipynb}. \\
+
+Pour l'implémentation de l'algorithme avec régularisation, on a choisi de l'implémenter avec l'approche de la région de confiance en utilisant la norme infinie. La raison principale est parce que avec l'approche de régularisation normale, le programme master n'est plus linéaire et donc c'est plus difficile pour les solveurs à resoudre le problème. En fait, GLPK n'accepte pas du tout des programmes non linéaires et il faut utiliser HiGHS. De plus, un changement de point de départ peut affecter HiGHS et le solveur peut retourner des erreurs même si la solution est techniquement réalisable.\\ 
+Avec l'approche de la région de confiance, le programme master reste linéaire et les contraintes de plus en sont aussi. Alors, c'est plus efficace pour les solveurs à résoudre même s'il y a plus de contraintes et la partie code en général est beaucoup plus stable.
+L'implémentation de l'algorithme L-shaped multi-cut avec région de confiance est dans le notebook \href{https://github.com/BNXBach/Work_stuffs_A2025/blob/main/TP_IFT/TP2/TP2-TrustRegion.ipynb}{TP2-TrustRegion.ipynb}.
+
+\textbf{NOTE:} Le notebook \href{https://github.com/BNXBach/Work_stuffs_A2025/blob/main/TP_IFT/TP2/TP2-L2Norm.ipynb}{TP2-L2Norm.ipynb} est aussi inclus dans le projet. Ce notebook n'est pas notre choix de l'implémentation pour l'exercice. On a inclu ce notebook comme une source de référence et pour montrer qu'on a rencontré les problèmes mentionés.
+
+\subsection*{Comparaison}
+On va comparer entre la méthode L-shaped multi-cut et la méthode L-shaped avec région de confiance. Pour la deuxième méthode, on va comparer aussi la performance en changeant le point de départ $a_\nu$. On a 2 cas:
+\begin{itemize}
+    \item Cas naive: matrice de 1 partour.
+    \item Cas moyen (AVG): la matrice est la solution optimale du problème d'espérance. On sait que cette solution est proche de celle du programme stochastique alors c'est un bon choix.
+\end{itemize} 
+~\\
+
+
+
+Les critères de comparaison sont le nombre d'itérations (et donc le nombre de coupes) et aussi la performance numérique des algorithmes. Voici le tableau de comparaison: \\~\\
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Méthode} & \textbf{Nb d'itérations} & \textbf{Temps(ms)} & \textbf{Nb d'allocations} & \textbf{Mémoire(MiB)} \\
+\hline
+Mutli-cut & 8 & 247.376 & 3842809 & 161.92 \\
+Trust region naive  & 10 & 612.327 & 9117298  & 388.04 \\
+Trust region AVG & 5 & 274.62 & 4546037 & 193.26 \\
+\hline
+\end{tabular}
+\label{tab:lshaped_comparison}
+\caption{Comparaison entre les différentes versions de l'algorithme L-shaped}
+\end{table}
+
+On note d'abord que l'approche de la région de confiance est la meilleure en fonction de l'efficacité (nombre d'itérations) mais cela dépend beaucoup du point de départ. Avec un mauvais point de départ, la méthode de région de confiance est moins efficace à l'approche L-shaped multi-cut simple. Cela coïncide avec \cite{book}\\
+Par contre, numériquement, c'est l'approche L-shaped multi-cut simple qui est la meilleure. La raison est parce que dans l'approche région de confiance, il faut qu'on calcule $\rho$ et fait plusieures comparaisons en plus. C'est pourquoi même si on a moins d'itérations, la mémoire utilisée est plus grande dans l'approche région de confiance. \\
+En terme de temps d'exécution, c'est vrai que l'approche de région de confiance prend plus de temps chaque d'itération mais on sait que c'est plus efficace. Le problème d'ici est que notre problème est encore assez simple alors la différence entre le nombre d'itérations des 2 méthodes est petite. Dans les cas où le problème est plus complexe, c'est possible que l'approche région de confiance peut sauver du temps en réduisant significativement le nombre d'itérations. Mais finalement, il faut qu'on résoud le problème d'espérance d'abord pour optimiser l'approche région de confiance alors si on considère la solution du problème d'espérance comme une étape obligatoire, c'est plus difficle de justifier l'approche région de confiance comme la meilleure solution.\\
+
+En conclusion, c'est clair que la méthode région de confiance est plus efficace en terme de nombre d'itérations mais en terme de temps d'exécution/mémoire, le choix n'est pas clair et le meilleur choix dépend beaucoup du problème initial. Dans le cas de notre problème, c'est l'approche multi-cut simple qui gagne.
+
+\newpage
+\section*{Références + Utilisation de l'intelligence artificielle}
+
+\printbibliography
+
+\subsection*{Utilisation de l'intelligence artificielle}
+J'ai utilisé l'IA pour:
+\begin{itemize}
+    \item Expliquer les conditions KKT + condition de Slater de manière plus intuitivement.
+    \item Faire des sommaires dans (\cite{book}).
+    \item Aide avec des syntaxes de Julia pour gérer des contraintes dans le cas L-shaped région de confiance parce que les contraintes change avec chaque itération.
+    \item Aide avec des syntaxes de Latex pour écrire ce rapport.
+\end{itemize}
+Le contenu de ce rapport est écrit sans utilisation de l'IA. La partie code Julia + les algorithmes sont basés sur les diapos du cours, \cite{book} et \cite{web}
+\end{document}
+
+
+
+
