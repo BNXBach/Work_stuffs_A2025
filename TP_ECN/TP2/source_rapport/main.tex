@@ -1,0 +1,541 @@
+
+% On définit le type de document, de papier et la grosseur des caractères.
+\documentclass[letterpaper,11pt]{article}
+
+% Trois lignes liées à l'ordinateur avec lequel on produit le document.
+\usepackage[utf8]{inputenc}
+\usepackage{titling}
+\usepackage{amsthm}
+
+% Highlight text
+\usepackage{soul} % for the command \hl
+
+% Bibliographie
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{Bib1.bib}
+
+\usepackage{dsfont}
+\usepackage{layout}
+\usepackage{cancel}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[document]{ragged2e}
+\usepackage[top=2cm,bottom=2cm,left=2.5cm,right=2.5cm,includehead=true,headheight=1cm]{geometry}%Pour ajustement des marges.
+\usepackage{amsbsy}%Accès à des symboles mathématiques
+\usepackage{amsfonts}%Accès à des symboles mathématiques
+\usepackage{amssymb}%Accès à des symboles mathématiques
+\usepackage{bm}%Pour mettre en gras n'importe quel symbole.
+\usepackage{enumerate}%Pour les listes d'énumération.
+\usepackage{parskip}%Pour pouvoir modifier l'espace entre les paragraphes.
+\usepackage{setspace}%Pour pouvoir modifier l'espace entre les lignes.
+\usepackage{upgreek}%Pour accéder aux lettres grecques en romain.
+\usepackage[b]{esvect}%Permet de créer des vecteurs.
+\usepackage{wasysym}
+\usepackage{afterpage}
+\usepackage{ stmaryrd }
+\usepackage{minted}
+\usepackage{mathtools}
+\usepackage{placeins}
+\usepackage{hyperref}
+
+%Symboles fréquents
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\?}{\stackrel{?}{=}}
+\let\epsilon\varepsilon
+\newcommand{\der}{\text{d}}
+
+\newcommand{\macroA}[1]{y_{#1}^{(1*)}}
+\newcommand{\macroB}[1]{y_{#1}^{(1)}}
+\newcommand{\macroC}[1]{r_{#1,fx}}
+
+%Mettre en gras ET italique le paramètre de la fonction
+\newcommand{\gras}[1]{\textbf{\textit{#1}}} 
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}%page vierge
+
+
+\newcommand{\probVar}[1]{\text{Var}\left(#1\right)} %Variance
+\newcommand{\probCov}[1]{\text{Cov}\left(#1\right)} %Variance
+\newcommand{\probP}[1]{\mathds{P}\left{#1\right}} %P de probabilités
+\newcommand{\probE}[1]{\mathbb{E}\left[#1\right]} %E de espérance
+
+\usepackage{hyperref}%'Linker' des équations et sources
+
+%Les quatre lignes qui suivent définissent l'espace entre les paragraphes, l'indentation, l'espace entre les lignes et la distance entre une boite et ce qu'elle contient.
+\parskip=10pt 
+\parindent=0pt
+\onehalfspacing
+\fboxsep=9pt
+
+%Parenthèses
+\newcommand{\bgl}{\bigl(}
+\newcommand{\Bgl}{\Bigl(}
+\newcommand{\bggl}{\biggl(}
+\newcommand{\Bggl}{\Biggl(}
+\newcommand{\bgr}{\bigr)}
+\newcommand{\Bgr}{\Bigr)}
+\newcommand{\bggr}{\biggr)}
+\newcommand{\Bggr}{\Biggr)}
+
+\renewcommand\thesection{\arabic{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.3\textwidth]{udem.png}\par\vspace{1cm} % Replace with your logo file
+    {\scshape\LARGE Université de Montréal \par}
+    \vspace{1cm}
+    {\scshape\Large Département de Sciences Économiques\par}
+    \vspace{1.5cm}
+    {\huge\bfseries Rapport Devoir 2\par}
+    \vspace{1.5cm}
+    {\Large\itshape Nguyen-Xuan-Bach Bui\par}
+    \vfill
+    {\Large ECN 6258 - Sujets spéciaux en monnaie, banques et marchés\par}
+\end{titlepage}
+
+All codes are available at \url{https://github.com/BNXBach/Work_stuffs_A2025/tree/main/TP_ECN}
+
+\section*{Partie 1: Taux zéro coupon}
+Ici pour cet exercice, on utilise la notion de $\lambda$ au lieu de $\tau$ pour la dernière paramètre. C'est juste un choix parce que $\tau=\frac{1}{\lambda}$ mais on a trouvé une liste de valeurs initiales intéressante qui utilise $\lambda$ alors c'est notre choix.
+
+Pour les valeurs intiales, il y a 3 cas "typiques" que le modèle trouve souvent et puis quelques cas spécials pour aider avec l'estimation. Pour choisir le meilleur vecteur de valeurs initiales, on utilise la somme pondérée des erreurs quadratiques (Weighted SSE) comme critère. Le vecteur de poids est juste $\sqrt{Maturity}$ alors on met plus de poids pour les termes longues. C'est aussi un choix qui dépend sur le but du fit, ici on veut un fit qui est parfois mieux qu'un fit général à cause du bruit introduit par des termes courtes alors si on met trop de poids sur ces termes, le model peut overfitter.
+
+Voici le tableau des valeurs initiales:
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Cas} & \textbf{$\beta_0$} & \textbf{$\beta_1$} & \textbf{$\beta_2$} & \textbf{$\lambda$} \\
+\hline
+Typical-1 & 0.02 & -0.01 & 0.02 & 0.5 \\
+Typical-2  & 0.03 & -0.02 & 0.03  & 0.3 \\
+Typical-3 & 0.01 & 0.01 & -0.01 & 0.7 \\
+Extreme curvature & 0.02 & 0.1 & -0.1 & 0.2 \\
+Steep decay & 0.03 & -0.05 & 0.05 & 2 \\
+Wide range & 0.01 & 0.1 & 0.1 & 0.05 \\
+\hline
+\end{tabular}
+\label{tab:init}
+\caption{Tableau des valeurs initiales utilisées}
+\end{table}
+Pour la partie suivante, pour chaque date, on va montrer les meilleures paramètres ainsi qu'un graphique comparé le fit et les données réelles. Pour garder ce rapport brève, on va montrer seulement le meilleur cas de valeur initiale.
+\newpage
+\subsection*{1995}
+La meilleure valeur initiale est "Extreme curvature". Les paramètres sont:
+\begin{itemize}
+    \item $\beta_0=0.0861$
+    \item $\beta_1=-0.0105$
+    \item $\beta_2=-0.0375$
+    \item $\lambda=0.6913$
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo1_1995.png}
+    \caption{Graphique modèle Nelson-Siegle pour 6/1995}
+\end{figure}
+\FloatBarrier
+
+On note que la forme de la courbe a une bosse à des termes courtes et puis une tendance croissante pour le reste avec une petite baisse à la fin. Le modèle NS a bien fitté la bosse et aussi la tendance mais exactement la dernière. En gros, avec une valeur WSSE de 0.00001, le modèle est un excellent fit pour cette courbe. Une chose intéressante aussi à noter est que la meilleure valeur initiale est "Extreme curvature" même si ce n'est pas le cas ici. On n'a pas trouvé une explication satisfaisante parce que c'est difficile d'analyser les étapes de lsqnonlin.
+
+\newpage
+\subsection*{2000}
+La meilleure valeur initiale est "Typical-1". Les paramètres sont:
+\begin{itemize}
+    \item $\beta_0=-2.2309$
+    \item $\beta_1=2.2898$
+    \item $\beta_2=2.3855$
+    \item $\lambda=0.0071$
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo1_2000.png}
+    \caption{Graphique modèle Nelson-Siegle pour 6/2000}
+\end{figure}
+\FloatBarrier
+
+On note que la forme de la courbe a 2 bosses à des termes courtes et aussi au niveau de maturité de 20 ans. La tendance gérnérale est croissante. Le modèle NS a bien trouvé la tendance mais pas les 2 bosses. La raison est simple, le modèle NS n'a pas d'assez paramètres/facteurs pour bien fitté ce type de courbe. Pour cela, il faut qu'on utilise des différents modèles, par exemple le modèle Nelson-Siegle-Svensson. La valeur SSE est aussi une bonne indication que le fit est pire. Le choix de valeur initiale n'est pas si important ici car le choix du modèle n'est pas correcte alors la valeur initiale n'aide pas beaucoup.
+
+\newpage
+\subsection*{2005}
+La meilleure valeur initiale est "Extreme curvature". Les paramètres sont:
+\begin{itemize}
+    \item $\beta_0=-0.1861$
+    \item $\beta_1=0.2099$
+    \item $\beta_2=0.3572$
+    \item $\lambda=0.03$
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo1_2005.png}
+    \caption{Graphique modèle Nelson-Siegle pour 6/2005}
+\end{figure}
+\FloatBarrier
+
+On note que la forme de la courbe a 2 bosses mais très faibles au niveau de maturité de 7.5 et 20 . La tendance gérnérale est croissante avec une baisse à terme longue. Le modèle NS a bien trouvé la tendance même à la fin. Les 2 bosses sont mal fittées mais ce n'est pas grave ici comme le cas précédent parce que c'est assez faible alors le modèle NS est acceptable ici. La valeur WSSE est aussi de niveau acceptable.
+Finalement, la meilleure valeur initiale est logique car $\beta_1$ et $\beta_2$ sont grands.
+
+\newpage
+\subsection*{2010}
+La meilleure valeur initiale est "Typical-2". Les paramètres sont:
+\begin{itemize}
+    \item $\beta_0=0.0292$
+    \item $\beta_1=-0.0225$
+    \item $\beta_2=0.0608$
+    \item $\lambda=0.1351$
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo1_2010.png}
+    \caption{Graphique modèle Nelson-Siegle pour 6/2010}
+\end{figure}
+\FloatBarrier
+
+On note que la forme de la courbe est assez standard avec une tendance croissante et il n'y a pas de bosse. Par contre, le modèle NS n'est pas un fit excellent, juste de niveau acceptable. La raison principale est un peu subtile mais c'est le fait que la pente de la courbe réelle ne change pas lissement (smooth slope). Alors, même s'il n'y a pas de bosse, ça pose quand même une difficulté pour le modèle NS. Le choix de valeur initiale peut aider avec cet effet mais même avec 3 cas typiques, on n'a pas trouvé un fit excellent.
+
+\newpage
+\subsection*{2015}
+La meilleure valeur initiale est "Typical-1". Les paramètres sont:
+\begin{itemize}
+    \item $\beta_0=0.0284$
+    \item $\beta_1=-0.0191$
+    \item $\beta_2=-0.0433$
+    \item $\lambda=0.544$
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo1_2015.png}
+    \caption{Graphique modèle Nelson-Siegle pour 6/2015}
+\end{figure}
+\FloatBarrier
+
+La forme de la courbe ici est très similaire de celle de l'année 1995 mais avec une bosse plus faible. Évidemment, le modèle NS est un fit excellent sauf à des termes longues. La raison est à cause du bruit des termes courtes (le petit crochet au début de la courbe). C'est pourquoi on a choisi le WSSE et pas le SSE comme critère de régression parce que sinon, on va choisir des modèles qui ont un overfit sur ces bruites à termes courtes.
+
+\newpage
+\subsection*{2018}
+La meilleure valeur initiale est "Typical-1". Les paramètres sont:
+\begin{itemize}
+    \item $\beta_0=0.0233$
+    \item $\beta_1=-0.0112$
+    \item $\beta_2=-0.0002$
+    \item $\lambda=1.155$
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo1_2018.png}
+    \caption{Graphique modèle Nelson-Siegle pour 6/2018}
+\end{figure}
+\FloatBarrier
+
+La forme de la courbe ici est très typique est standard pour une courbe avec tendance croissante. Alors, le modèle NS est presque parfait comme fit pour cette courbe, il y a juste une petite surestimation à la fin mais en général, c'est négligable. De plus, c'est aussi évident que un choix de valeur initiale typique est le meilleur choix ici.
+
+\newpage
+\subsection*{2020}
+La meilleure valeur initiale est "Typical-3". Les paramètres sont:
+\begin{itemize}
+    \item $\beta_0=0.0174$
+    \item $\beta_1=-0.0141$
+    \item $\beta_2=-0.0212$
+    \item $\lambda=0.2553$
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo1_2020.png}
+    \caption{Graphique modèle Nelson-Siegle pour 6/2020}
+\end{figure}
+\FloatBarrier
+
+La forme de courbe est similaire de celle de l'année 2005 mais ici les 2 bosses sont plus fortes. Par contre, la tendance générale est une tendance croissante et c'est simple à voir. Alors, le modèle NS a bien attrapé la tendance générale mais pas les détails plus spécifiques comme les 2 bosses. Il y a aussi du bruit au début qui a peut être affecté le fit du modèle.
+
+\newpage
+\subsection*{2023}
+La meilleure valeur initiale est "Steep decay". Les paramètres sont:
+\begin{itemize}
+    \item $\beta_0=0.0298$
+    \item $\beta_1=0.0008$
+    \item $\beta_2=0.0662$
+    \item $\lambda=3.2781$
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo1_2023.png}
+    \caption{Graphique modèle Nelson-Siegle pour 6/2023}
+\end{figure}
+\FloatBarrier
+
+Peut-être la forme la plus spéciale parmi ceux qu'on a. On a une forte tendance décroissante de niveau $\dfrac{1}{log}$ et il y a aussi une forte augmentation au début avant la partie décroissante. Malgré cela, le fit du modèle NS est en fait acceptable sauf peut-être au niveau de maturité 5. La raison est parce que la forme générale de la courbe reste assez typique, c'est juste un cas fort de la courbe décroissante. C'est aussi pourquoi le choix de la valeur initiale est importante parce que ici $\lambda=3.2781$ et notre $\lambda_0=2$.
+
+\newpage
+\subsection*{Conclusion}
+En conclusion, le modèle NS est un très bien outil pour fitter ces courbes mais avec des notes importantes:
+\begin{itemize}
+    \item S'il y a plusieures bosses et/ou des fluctuations fortes sur la pente, le modèle NS n'est pas assez équippé pour fitter ces types de courbe alors c'est mieux de choisir un autre modèle.
+    \item C'est extrêmement important de bien choisir la valeur initiale. On n'a pas montré ici mais les paramètres du fit et donc le WSSE changent avec la valeur initiale. En fait, la valeur initiale ici est comme une hyperparamètre qu'on doit régler. Pour le faire, on peut faire un grid search sur les valeurs initiales pour trouver la meilleure. Par contre, il faut faire beaucoup de MCO non-linéaire alors cela peut prendre plus de temps.
+\end{itemize}
+\newpage
+\section*{Partie 2: Prime de risque dans les taux de change}
+\subsection*{Démonstration (Question 1-6)}
+\subsubsection*{Question 1}
+Pour montrer (2), on commence par la définition de $q_t$:
+\begin{equation*}
+\begin{aligned}
+    &&q_t =& s_t+ln(CPI_t^*)-ln(CPI_t)\\
+&\Rightarrow&   s_t =&q_t+ln(CPI_t)-ln(CPI_t^*)
+\end{aligned}
+\end{equation*}
+Remplaçons $s_t$ dans (1) et on a:
+\begin{equation*}
+\begin{aligned}
+    &&r_{t+1,fx} &= s_{t+1}-s_t+y_t^{(1*)}-y_t^{(1)}\\
+&\Rightarrow&   \macroC{t+1} &=q_{t+1}+ln(CPI_{t+1})-ln(CPI_{t+1}^*)-q_t-ln(CPI_t)+ln(CPI_t^*) + \macroA{t}-\macroB{t+1}\\
+&\Rightarrow&   \macroC{t+1} &= q_{t+1}-q_t -\left( ln\left(\dfrac{CPI^*_{t+1}}{CPI^*_t}\right)-ln\left(\dfrac{CPI_{t+1}}{CPI_t}\right) \right)+ \macroA{t}-\macroB{t+1}\\
+&\Rightarrow&   \macroC{t+1} &= q_{t+1}-q_t -(\pi^*_{t+1}-\pi_{t+1})+ \macroA{t}-\macroB{t+1}
+\end{aligned}
+\end{equation*}
+\subsubsection*{Question 2}
+D'abord, on note que si on calcule par exemple $\macroC{t+3}+\macroC{t+2}+\macroC{t+1}$ en utilisant (2), les termes $q_t$ s'annulent sauf la première terme $q_{t+3}$ et la dernière terme $-q_t$. Les termes $\pi$ et $y$ restent. Maintenant, soit $m\geq1$, on a donc:
+\begin{equation*}
+\begin{aligned}
+    &&\sum_{j=1}^{m}\macroC{t+j} &= q_{t+m}-q_t-\sum_{j=1}^{m}(\pi^*_{t+j}-\pi_{t+j})+\sum_{j=0}^{m-1}(\macroA{t+j}-\macroB{t+j})\\
+&\Rightarrow&   q_t &=q_{t+m}-\sum_{j=1}^{m}(\pi^*_{t+j}-\pi_{t+j})+\sum_{j=0}^{m-1}(\macroA{t+j}-\macroB{t+j})-\sum_{j=1}^{m}\macroC{t+j}\\
+&\Rightarrow&   E_t[q_t] &=E_t[q_{t+m}]-\sum_{j=1}^{m}E_t[\pi^*_{t+j}-\pi_{t+j}]+\sum_{j=0}^{m-1}E_t[\macroA{t+j}-\macroB{t+j}]-\sum_{j=1}^{m}E_t[\macroC{t+j}]\\
+&\Rightarrow&  q_t &=E_t[q_{t+m}]-\sum_{j=1}^{m}E_t[\pi^*_{t+j}-\pi_{t+j}]+\sum_{j=0}^{m-1}E_t[\macroA{t+j}-\macroB{t+j}]-\sum_{j=1}^{m}E_t[\macroC{t+j}]
+\end{aligned}
+\end{equation*}
+On note que la dernière ligne vient du fait que c'est l'espérance conditionelle sur $t$ alors $E_t[q_t]=q_t$
+\subsubsection*{Question 3}
+La démonstration ici est simple. Sous l'hypothèse PPA, il ne faut que prendre (3) et faire tendre $m \rightarrow \infty$:
+\begin{equation*}
+\begin{aligned}
+    &&q_t &=E_t[q_{t+m}]-\sum_{j=1}^{m}E_t[\pi^*_{t+j}-\pi_{t+j}]+\sum_{j=0}^{m-1}E_t[\macroA{t+j}-\macroB{t+j}]-\sum_{j=1}^{m}E_t[\macroC{t+j}]\\
+    &\Rightarrow& q_t &=\mu_q-\sum_{j=1}^{\infty}E_t[\pi^*_{t+j}-\pi_{t+j}]+\sum_{j=0}^{\infty}E_t[\macroA{t+j}-\macroB{t+j}]-\sum_{j=1}^{\infty}E_t[\macroC{t+j}]\\
+        &\Rightarrow& q_t-\mu_q &=-\sum_{j=1}^{\infty}E_t[\pi^*_{t+j}-\pi_{t+j}]+\sum_{j=0}^{\infty}E_t[\macroA{t+j}-\macroB{t+j}]-\sum_{j=1}^{\infty}E_t[\macroC{t+j}]
+\end{aligned}
+\end{equation*}
+\subsubsection*{Question 4+5}
+Pour cette partie, on commence par analyser chaque somme dans (4). On a d'abord:
+\begin{equation*}
+\begin{aligned}
+    &&\pi_{t+1}^*-\pi_{t+1} &= \mu_{\pi}+\epsilon_{t+1}^{\pi} \\
+    &\Rightarrow& E_t[\pi_{t+1}^*-\pi_{t+1}] &= E_t[\mu_{\pi}] + E_t[\epsilon_{t+1}^{\pi}]\\
+    &\Rightarrow& \sum_{j=1}^{\infty}E_t[\pi_{t+j}^*-\pi_{t+j}] &= \sum_{j=1}^{\infty}\mu_{\pi} \ \ \ \textbf{(A)} \\
+\end{aligned}
+\end{equation*}
+Pour la somme suivante on prend (8) et on fait l'expansion:
+\begin{equation*}
+\begin{aligned}
+    &&\macroA{t+1}-\macroB{t+1} &= (1-\rho_i)\mu_i + \rho_i(\macroA{t}-\macroB{t})+\epsilon_{t+1}^i\\
+    &\Rightarrow& E_t[\macroA{t+1}-\macroB{t+1}] &= \mu_i + \rho_i(E_t[\macroA{t}-\macroB{t}-\mu_i])\\
+    &\Rightarrow& E_t[\macroA{t+1}-\macroB{t+1}] &= \mu_i + \rho_i(\macroA{t}-\macroB{t}-\mu_i)\\
+    &\Rightarrow& \sum_{j=0}^{\infty}E_t[\macroA{t+j}-\macroB{t+j}] &= \sum_{j=0}^{\infty}\mu_i+\sum_{j=0}^{\infty}\rho_i^j(\macroA{t}-\macroB{t}-\mu_i)\\
+    &\Rightarrow& \sum_{j=0}^{\infty}E_t[\macroA{t+j}-\macroB{t+j}] &= \sum_{j=0}^{\infty}\mu_i+\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i} \ \ \ \textbf{(B)}\\
+\end{aligned}
+\end{equation*}
+On note que la dernière ligne vient du fait que $0\leq\rho_i<1$ alors la somme est une série géométrique.
+Pour la dernière somme, on commence par analyser (6):
+\begin{equation*}
+\begin{aligned}
+    &&\eta_{t+1} &= \rho_{\eta}\eta_t+\epsilon_{t+1}^{\eta} \\
+    &\Rightarrow& E_t[\eta_{t+1}] &= \rho_{\eta}E_t[\eta_t] \\
+    &\Rightarrow& E_t[\eta_{t+1}] &= \rho_{\eta}\eta_t\\
+    &\Rightarrow& \sum_{j=0}^{\infty}E_t[\eta_{t+j}] &= \sum_{j=0}^{\infty}\rho_{\eta}^j\eta_t\\
+    &\Rightarrow& \sum_{j=0}^{\infty}E_t[\eta_{t+j}] &= \dfrac{\eta_t}{1-\rho_{\eta}}
+\end{aligned}
+\end{equation*}
+Maintenant, sur (5), on a:
+\begin{equation*}
+\begin{aligned}
+    &&\macroC{t+1} &= \alpha+(1-\beta)(\macroA{t}-\macroB{t})+\eta_t+\epsilon_{t+1}^r\\
+    &\Rightarrow& E_t[\macroC{t+1}] &= \alpha+(1-\beta)E_t[\macroA{t}-\macroB{t}]+E_t[\eta_{}] \\
+    &\Rightarrow& \sum_{j=1}^{\infty}E_t[\macroC{t+j}] &= \sum_{j=0}^{\infty}\alpha+(1-\beta)\sum_{j=0}^{\infty}E_t[\macroA{t}-\macroB{t}]+\sum_{j=0}^{\infty}E_t[\eta_{t+j}] \\
+    &\Rightarrow& \sum_{j=1}^{\infty}E_t[\macroC{t+j}] &= \sum_{j=0}^{\infty}\alpha+(1-\beta)\left(\sum_{j=0}^{\infty}\mu_i+\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}\right)+\sum_{j=0}^{\infty}E_t[\eta_{t+j}] \\
+    &\Rightarrow& \sum_{j=1}^{\infty}E_t[\macroC{t+j}] &= \sum_{j=0}^{\infty}(\alpha+(1-\beta)\mu_i)+(1-\beta)\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}+\dfrac{\eta_t}{1-\rho_{\eta}}  \\
+    &\Rightarrow& \sum_{j=1}^{\infty}E_t[\macroC{t+j}] &= \sum_{j=0}^{\infty}(\beta\mu_i-\mu_{\pi}+\mu_i-\beta\mu_i)+(1-\beta)\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}+\dfrac{\eta_t}{1-\rho_{\eta}} \\
+    &\Rightarrow& \sum_{j=1}^{\infty}E_t[\macroC{t+j}] &= \sum_{j=0}^{\infty}(\mu_i-\mu_{\pi})+(1-\beta)\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}+\dfrac{\eta_t}{1-\rho_{\eta}} \ \ \ \ \textbf{(C)} 
+\end{aligned}
+\end{equation*}
+Maintenant, en utilisant (4) et $\textbf{(A)}$,$\textbf{(B)}$,$\textbf{(C)}$, on a:
+\begin{equation*}
+\begin{aligned}
+    &&q_t-\mu_q &=-\sum_{j=1}^{\infty}E_t[\pi^*_{t+j}-\pi_{t+j}]+\sum_{j=0}^{\infty}E_t[\macroA{t+j}-\macroB{t+j}]-\sum_{j=1}^{\infty}E_t[\macroC{t+j}] \\
+    &\Rightarrow& q_t-\mu_q &= -\sum_{j=1}^{\infty}\mu_{\pi}+\sum_{j=0}^{\infty}\mu_i+\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}-\sum_{j=0}^{\infty}(\mu_i-\mu_{\pi})-(1-\beta)\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}-\dfrac{\eta_t}{1-\rho_{\eta}}
+\end{aligned}
+\end{equation*}
+On peut voir que toutes les sommes s'annulent et ce qui reste est:
+\begin{equation*}
+\begin{aligned}
+    q_t-\mu_q &=\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}-(1-\beta)\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}-\dfrac{\eta_t}{1-\rho_{\eta}}\\
+     &= \beta\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}-\dfrac{\eta_t}{1-\rho_{\eta}} \ \ \ \textbf{(D)}
+\end{aligned}
+\end{equation*}
+\subsubsection*{Question 6}
+On commence par isoler $\epsilon_{t+1}^r$ dans (5) et puis utiliser (2):
+\begin{equation*}
+\begin{aligned}
+    &&\epsilon_{t+1}^r &= \macroC{t+1}-\alpha-(1-\beta)(\macroA{t}-\macroB{t})-\eta_t\\
+    &\Rightarrow& \epsilon_{t+1}^r &=q_{t+1}-q_t -(\pi^*_{t+1}-\pi_{t+1})+ \macroA{t}-\macroB{t+1}-\alpha-(1-\beta)(\macroA{t}-\macroB{t})-\eta_t\\
+    &\Rightarrow& \epsilon_{t+1}^r &=q_{t+1}-q_t -(\mu_{\pi}+\epsilon_{t+1}^{\pi})+ \beta(\macroA{t}-\macroB{t+1})-\alpha-\eta_t\\
+    &\Rightarrow& \epsilon_{t+1}^r &=q_{t+1}-q_t -\mu_{\pi}-\epsilon_{t+1}^{\pi}+ \beta(\macroA{t}-\macroB{t+1})-\beta\mu_i+\mu_{\pi}-\eta_t\\
+    &\Rightarrow& \epsilon_{t+1}^r &=q_{t+1}-q_t -\epsilon_{t+1}^{\pi}+ \beta(\macroA{t}-\macroB{t+1})-\beta\mu_i-\eta_t\\
+\end{aligned}
+\end{equation*}
+On note que $q_{t+1}-q_t=q_{t+1}-\mu_q-q_t+\mu_q=(q_{t+1}-\mu_q)-(q_t-\mu_q)$ alors, on peut le remplacer en appliquant $\textbf{(D)}$:
+\begin{equation*}
+\begin{aligned}
+    \epsilon_{t+1}^r &=q_{t+1}-q_t -\epsilon_{t+1}^{\pi}+ \beta(\macroA{t}-\macroB{t+1})-\beta\mu_i-\eta_t\\
+     &=\beta\dfrac{(\macroA{t+1}-\macroB{t+1}-\mu_i)}{1-\rho_i}-\dfrac{\eta_{t+1}}{1-\rho_{\eta}}-\beta\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}+\dfrac{\eta_t}{1-\rho_{\eta}}-\epsilon_{t+1}^{\pi}+ \beta(\macroA{t}-\macroB{t+1})-\beta\mu_i-\eta_t\\
+     &=\beta\dfrac{(1-\rho_i)\mu_i + \rho_i(\macroA{t}-\macroB{t})+\epsilon_{t+1}^i-\mu_i}{1-\rho_i}-\dfrac{\eta_{t+1}}{1-\rho_{\eta}}-\beta\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}\\&+\dfrac{\eta_t}{1-\rho_{\eta}}-\epsilon_{t+1}^{\pi}+ \dfrac{\beta(1-\rho_i)(\macroA{t}-\macroB{t+1}-\mu_i)}{1-\rho_i}-\eta_t\\
+     &=\beta\dfrac{\mu_i + \rho_i(\macroA{t}-\macroB{t}-\mu_i)+\epsilon_{t+1}^i-\mu_i-(\macroA{t}-\macroB{t+1}-\mu_i)+(1-\rho_i)(\macroA{t}-\macroB{t+1}-\mu_i)}{1-\rho_i}\\&-\dfrac{\eta_{t+1}}{1-\rho_{\eta}}+\dfrac{\eta_t}{1-\rho_{\eta}}-\epsilon_{t+1}^{\pi}-\eta_t\\
+     &=\beta\dfrac{\epsilon_{t+1}^i}{1-\rho_i}-\epsilon_{t+1}^{\pi}-\dfrac{\eta_{t+1}-\eta_t+\eta_t(1-\rho_{\eta})}{1-\rho_{\eta}}\\
+     &=\beta\dfrac{\epsilon_{t+1}^i}{1-\rho_i}-\epsilon_{t+1}^{\pi}-\dfrac{\rho_{\eta}\eta_t+\epsilon_{t+1}^{\eta}-\eta_t+\eta_t-\eta_t\rho_{\eta}}{1-\rho_{\eta}}\\
+     &=\beta\dfrac{\epsilon_{t+1}^i}{1-\rho_i}-\epsilon_{t+1}^{\pi}-\dfrac{\epsilon_{t+1}^{\eta}}{1-\rho_{\eta}}
+\end{aligned}
+\end{equation*}
+Pour montrer (10), il ne faut que prendre $\textbf{(D)}$ et isoler $\eta_t$:
+\begin{equation*}
+\begin{aligned}
+    &&q_t-\mu_q &=\beta\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}-\dfrac{\eta_t}{1-\rho_{\eta}}\\
+     &\Rightarrow& \dfrac{\eta_t}{1-\rho_{\eta}}&=\beta\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}-( q_t-\mu_q)\\
+     &\Rightarrow& \eta_t&=(1-\rho_{\eta})\left[\beta\dfrac{(\macroA{t}-\macroB{t}-\mu_i)}{1-\rho_i}-( q_t-\mu_q)\right]\qedsymbol\\
+\end{aligned}
+\end{equation*} 
+\newpage
+\subsection*{Application (Question 7)}
+\textbf{NOTE!!!:} Avant de commencer cette partie de code, on veut définir clairement ce qu'on calcule et qu'est-ce qu'on a utilisé pour faire ces calculs. 
+
+Premièrement, c'est le pas du temps du modèle, c-à-d quel est le temps entre $t$ et $t+1$. C'est important de bien définir le pas du temps parce qu'il faut qu'on reste constant pendant les calculs. Le pas de notre choix est mensuel, c-à-d on va calculer les primes de risque pour l'horizon d'un mois. La raison principale est parce que notre fichier de données est mensuel alors pour maximiser le nombre d'observations, c'est bien qu'on utilise le même pas pour le modèle. Ce choix a un problème et c'est le taux d'intérêt est annualisé alors il faut convertir en taux mensuel. On a choisi d'utiliser l'approximation du TP1 et multiplier le taux annuel par $\frac{30}{360}=\frac{1}{12}$ pour obtenir le taux mensuel.
+
+Un autre note assez important est que le taux d'inflation dans le graphique qu'on va montrer est sur une durée d'un an mais le taux d'inflation qu'on utilise pour calculer les primes de risque sera le taux d'inflation sur une durée d'un mois.
+
+\subsubsection*{Question 7.1}
+On commence par le graphique du taux de change des pays (non log).
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo2_tdc.png}
+    \caption{Courbes taux de change des 5 pays}
+\end{figure}
+\FloatBarrier
+
+On commence par noter que le taux de change du Japon est trop pétit pour noter des changements mais en général, le taux japonais reste entre $0.008$ et $0.012$ alors c'est assez stable la relation FX entre le USD et le yen. On peut grouper le reste ensemble car les courbes sont assez similaires. Leur taux montent en 2000-2007 puis une baisse à 2008 à cause la crise financière. Il faut noter que la crise financière est globale alors son effet sur les taux de change n'est pas si fort (sauf l'Angleterre). Après ça c'est une période stable à cause de la globalisation des swaps de devises alors le marché doit être stabilisé pour éviter des crashs soudains. Un cas spécial qu'on peut noter est une baisse de taux de l'Angleterre et de l'Euro en 2016. Il y a beaucoup de raisons possibles et une raison principale est parce que c'est l'année où le mouvement Brexit est le plus fort. Alors, cet évènement a causé des doutes sur la stabilisation de l'économie de l'Angleterre et de l'Euro en générale.
+
+\newpage
+Puis on a le graphique de la différence entre le taux d'intérêt et le taux d'intérêt domestique $(\macroA{t}-\macroB{t})$:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo2_diffrate.png}
+    \caption{Courbes différence taux étrangère et taux domestique}
+\end{figure}
+\FloatBarrier
+
+Encore une fois, on peut grouper les  pays parce cet indicateur est plutôt pour montrer la valeur de l'USD au cours du temps où une valeur négative (taux étrangère $<$ taux taux domestique) indique que la valeur de l'USD relative à des devises va baisser et vice versa. On a quelques périodes à noter:
+\begin{itemize}
+    \item 1999-2002: Grosse baisse de la valeur de l'USD
+    \item 2002-2004: Courte période stable
+    \item 1999-2007: Grosse augmentation de la valeur de l'USD
+    \item 2007-2009: Crise financière, grosse baisse de la valeur de l'USD
+    \item 2009-2015: Longue période stable post-crise
+    \item 2015-2020: Légère augmentation de la valeur de l'USD
+\end{itemize}
+
+\newpage
+Ensuite, on a le graphique du taux d'inflation de chaque pays (les Étas-Unis inclus):
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo2_inflation.png}
+    \caption{Courbes taux d'inflation}
+\end{figure}
+\FloatBarrier
+
+Il y a 3 choses principales à noter ici:
+\begin{itemize}
+    \item La période ici est après la création de la politique monétaire alors on peut voir que l'inflation est bien contrôlé par des grandes économies.
+    \item Les taux d'inflation ici ont de la forme des séries temporelles de forme AR(1).
+    \item On peut séparer les périodes en 3 morceaux: pré-crise, pendant la crise et post-crise. Pendant la crise, le taux d'inflation a beaucoup plus de fluctuations.
+\end{itemize}
+    
+
+
+\newpage
+Finalement, on a le graphique du log de rendement excédentaire:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo2_excedentaire.png}
+    \caption{Courbes log rendement excédentaire}
+\end{figure}
+\FloatBarrier
+
+Ici, on peut voir que le log-rendement excédentaire de tous les pays sont des bruits. Par contre, ce n'est pas des bruits blancs, c-à-d il y a encore d'autocorrélation dans ces courbes. On peut voir que pendant la crise, les points extrêmes sont plus grands que ceux des autres périodes. C'est plus difficile à voir mais on peut noter que le CAD et le yen ont des log-rendements un peu plus stable que les autres devises. On va vérifier cette observation après.
+
+\newpage
+\subsubsection*{Estiamtion de la prime de risque}
+\textbf{NOTE!!!:} On ne va pas montrer les résultats des régressions parce qu'il y en a 15 et majoritairement, les observations sont de même: le modèle a bien fitté les données.
+
+Par contre, il y a un aspect très important qu'on va discuter ici: la p-valeur. Dans les régressions, il arrive très souvent qu'on a estimé une paramètre et la p-valeur est plus grande que $0.05$, même $0.5$ parfois. Alors, c'est possbile de mettre ces paramètres à 0 mais on n'a pas le fait. Statistiquement, on ne peut pas rejeter l'hypothèse nulle si la p-valeur est trop grande mais ce n'est pas forcé qu'on doit accepter l'hypothèse alternative. En fait, c'est juste qu'on ne peut pas faire la décision. De plus, la p-valeur n'est pas une critère binaire qu'on peut utliser pour faire un choix mais c'est plutôt un indicateur du niveau de risque d'introduire d'erreure statistique dans le modèle. Finalement, la p-valeur qu'on obtient pendant les régressions est techiniquement fausse. La raison est parce qu'on utilise des paramètres d'une régression pour faire un autre (chaine de régression) alors il faut en fait calculer des p-valeurs ajustées ce qui est beaucoup plus compliqué à faire et ça ne vaut pas le coup parce qu'on ne cherche pas à faire des tests statistiques, on cherche juste à faire une estimation d'une paramètre en utilisant la régression.
+
+Alors, c'est pourquoi on ne va pas inclure les p-valeurs dans ce rapport. Par contre, elles sont toujours disponibles dans le fichier code inclu.
+
+\newpage 
+On commence par observer le tableau des paramètres et aussi le graphique des courbes de $\eta_t$
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrrr}
+\hline
+\textbf{Pays} & \textbf{$\mu_{\pi}$} & \textbf{$\sigma_{\pi}$} & \textbf{$\mu_i$} & \textbf{$\rho_i$} & \textbf{$\sigma_i$} \\
+\hline
+Canada & -0.00020221 & 0.00279 & 0.00015838 & 0.9574 & 0.000186 \\
+Euro  & -0.00060886 & 0.00454 & -0.00046048 & 0.9830 & 0.000216 \\
+Japan & -0.0017 & 0.00394 & -0.0012 & 0.9806 & 0.000273 \\
+Switzerland & -0.0014 & 0.0039 & -0.0011 & 0.9690 & 0.000252 \\
+United Kingdom & -0.00017098 & 0.00416 & 0.00024966 & 0.9752 & 0.000244 \\
+\hline
+\end{tabular}
+\label{tab:init}
+\caption{Tableau des paramètres intermédiaires}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo2_eta.png}
+    \caption{Courbes de valeur de $\eta_t$}
+\end{figure}
+\FloatBarrier
+
+Premièrement, on n'a pas beaucoup de choses à extraire sur le tableau. Ces valeurs sont trop spécifiques et abstraites pour bien décrire un phénomène. On peut quand même noter que l'indice d'inflation entre Japon-US et Suisse-US sont plus grands que les autres mais c'est quasiment tout ce qu'on peut observer.
+
+C'est le graphique de $\eta_t$ qui nous donne des infos intéressantes car c'est une combinaison de toutes des paramètres intermédiaires alors ça marche comme un indicateur de "risque". Une valeur positive indique que garder la devise étrangère est plus risqué et une valeur négative indique que garder la dévise domestique est plus risqué.
+
+Maintenant, en observant les pays, on peut reconfirmer le fait que le log-rendement du Japon et du Canada sont plus stables parce que ici leurs valeurs $\eta_t$ sont aussi stables autour de 0. Puis, l'Euro et la Suisse a une forme de courbe très similaire que leur taux de change: une augmentation au début, puis une baisse, puis une augmentation pendant la crise et finir par une période stable et une légère baisse à la fin. Ce qui est intéressant est l'Angleterre où c'est absoluement contraire de la Suise et de l'Euro. On n'a pas trouvé une raison concrète qui peut tout expliquer mais on a plusieures hypothèses: stratégie des agents sur swaps Pounds-USD, Brexit,etc...
+
+
+Et finalement, le graphique le plus important de l'exercice, les courbes des primes de risque:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{exo2_fxrp.png}
+    \caption{Courbes des primes de risque}
+\end{figure}
+\FloatBarrier
+
+Encore une fois, on note que la prime du Japon et du Canada sont très stables. Cela confirme que la relation de Yen-USD et CAD-USD sont toujours fortement imbriqués. Par contre pour le reste, la prime de risque avant la crise fluctue beaucoup avec une période où elle atteigne $1\%-1.5\%$. Il faut renoter que c'est la prime d'une période d'un mois alors une valeur de $1\%$ est très haute. Mais, on peut voir aussi l'effet de la globalisation du marché de swaps de devises parce que après la crise, les primes de risques sont toutes contrôlées autour de $-0.5\%$ et $0.5\%$
+
+\end{document}
+
+
+
+
